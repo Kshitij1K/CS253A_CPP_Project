@@ -64,13 +64,11 @@ void LoginState::run(Library* library) {
             
             case 2:
                 library->changeState(&ProfessorAccessState::getInstance());
-                // current_state_ = std::make_shared<ProfessorAccessState>(current_state_);
                 return;
 
             case 3:
                 library->changeState(&LibrarianAccessState::getInstance());
-                // current_state_ = std::make_shared<LibrarianAccessState>(current_state_);
-                return;
+                  return;
             }
 
         }

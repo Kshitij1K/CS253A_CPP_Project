@@ -4,20 +4,10 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <book.hpp>
+#include <user.hpp>
 
-std::vector<std::string> getSplitStrings(std::string full_string) {
-    size_t position = 0;
-    std::vector<std::string> string_list;
-
-    while ((position = full_string.find(" ")) != std::string::npos) {
-        string_list.push_back(full_string.substr(0, position));
-        full_string.erase(0, position + 1);
-    }
-
-    string_list.push_back(full_string);
-
-    return string_list;
-}
+#include <library.hpp>
 
 enum class Event {
     kLogout,
@@ -26,29 +16,6 @@ enum class Event {
     kLibrarianLogin,
     kStudentLogin,
     kNone
-};
-
-class Library;
-
-class State {
-    public:
-    virtual void run(Library* library) = 0;
-    virtual void enter(Library* library) = 0;
-    virtual void exit(Library* library) = 0;
-
-    protected:
-    std::vector<std::string> getSplitStrings(std::string full_string);
-};
-
-class Library {
-    public:
-    State* current_state_ = NULL;
-    std::string username;
-    void changeState(State* state) {
-        if (current_state_ != NULL) current_state_->exit(this);
-        current_state_ = state;
-        current_state_->enter(this);
-    }
 };
 
 class LoginState : public State {
