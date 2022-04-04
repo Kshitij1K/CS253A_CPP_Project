@@ -1,20 +1,27 @@
 #pragma once
 #include <string>
 #include <list>
+#include <ctime>
+#include <iostream>
 
 class Book {
+    public:
     void bookRequest();
-    void showDueDate();
+    std::tm showDueDate();
+    std::string getTitle();
+    std::string getisbn();
+    void displayBookInfo();
 
     private:
     std::string title;
     std::string author;
     std::string isbn;
     std::string publication;
-    std::string date_of_issue; // in dd-mm-yyyy format
+    std::tm date_of_issue;
 };
 
 class BookDatabase {
+    public:
     void addBook();
     void updateBook();
     void deleteBook();

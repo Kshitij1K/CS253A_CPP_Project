@@ -1,6 +1,9 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <book.hpp>
+#include <user.hpp>
+
 class Library;
 
 class State {
@@ -16,8 +19,8 @@ class Library {
     std::string username;
     void changeState(State* state);
 
-    // BookDatabase book_database;
-    // UserDatabase user_database;
+    BookDatabase book_database;
+    UserDatabase user_database;
 };
 
 std::vector<std::string> getSplitStrings(std::string full_string);
