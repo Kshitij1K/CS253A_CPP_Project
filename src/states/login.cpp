@@ -1,24 +1,5 @@
 #include <state_machine.hpp>
 
-std::vector<std::string> State::getSplitStrings(std::string full_string) {
-    size_t position = 0;
-    std::vector<std::string> string_list;
-
-    while ((position = full_string.find(" ")) != std::string::npos) {
-        string_list.push_back(full_string.substr(0, position));
-        full_string.erase(0, position + 1);
-    }
-
-    string_list.push_back(full_string);
-
-    return string_list;
-}
-
-
-
-
-
-
 State& LoginState::getInstance() {
   static LoginState singleton;
   return singleton;
@@ -75,7 +56,6 @@ void LoginState::run(Library* library) {
             }
 
 
-
             switch (stoi(types[index]))
             {
             case 1:
@@ -102,48 +82,3 @@ void LoginState::run(Library* library) {
 void LoginState::exit(Library* library) {
     library->username = entered_username;
 }
-
-State& StudentAccessState::getInstance() {
-  static StudentAccessState singleton;
-  return singleton;
-}
-
-void StudentAccessState::enter(Library* library) {
-    std::cout << "Student Portal\n";
-}
-
-void StudentAccessState::run(Library* library) {
-    library->current_state_ = NULL;
-}
-
-void StudentAccessState::exit(Library* library) {}
-
-State& ProfessorAccessState::getInstance() {
-  static ProfessorAccessState singleton;
-  return singleton;
-}
-
-void ProfessorAccessState::enter(Library* library) {
-    std::cout << "Professor Portal\n";
-}
-
-void ProfessorAccessState::run(Library* library) {
-    library->current_state_ = NULL;
-}
-
-void ProfessorAccessState::exit(Library* library) {}
-
-State& LibrarianAccessState::getInstance() {
-  static LibrarianAccessState singleton;
-  return singleton;
-}
-
-void LibrarianAccessState::enter(Library* library) {
-    std::cout << "Librarian Portal\n";
-}
-
-void LibrarianAccessState::run(Library* library) {
-    library->current_state_ = NULL;
-}
-
-void LibrarianAccessState::exit(Library* library) {}
