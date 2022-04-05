@@ -45,7 +45,7 @@ class ProfessorAccessState : public State {
     void exit(Library* library);
 
     private:
-    ProfessorAccessState(){}
+    Professor* professor_;
     // Professor professor_;
 };
 
@@ -58,7 +58,7 @@ class StudentAccessState : public State {
     void exit(Library* library);
 
     private:
-    StudentAccessState(){}
+    Student* student_;
     // Student student_;
 };
 
@@ -71,7 +71,7 @@ class LibrarianAccessState : public State {
     void exit(Library* library);
 
     private:
-    LibrarianAccessState(){}
+    Librarian* librarian_;
     // Librarian librarian_;
 };
 

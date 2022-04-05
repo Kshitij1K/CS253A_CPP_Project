@@ -89,6 +89,14 @@ void BookDatabase::bookRequest(std::string isbn, bool is_stock_left) {
     book->second = is_stock_left;
 }
 
+void BookDatabase::listAllBooks() {
+    auto book_it_ = list_of_books_.begin();
+
+    for (; book_it_ != list_of_books_.end(); book_it_++) {
+        book_it_->first.displayBookInfo();
+    }
+}
+
 void Book::bookRequest(std::tm date_of_issue) {
     this->date_of_issue = date_of_issue;
 }

@@ -9,7 +9,6 @@ Student::Student(std::string name,
     name_ = name;
     id_ = username;
     password_ = password;
-    type_ = "Student";
 
     list_of_books_ = borrowed_books;
     cleared_fine_ = fines[0];
@@ -69,7 +68,17 @@ void Student::clearFineAmount(double amount) {
     std::cout << "Remaining fine is: " << fine_amount_+prev_fine_-cleared_fine_ <<"\n\n";
 }
 
+void Student::listIssuedBooks() {
+    auto book_it_ = list_of_books_.begin();
 
+    for (; book_it_ != list_of_books_.end(); book_it_++) {
+        book_it_->displayBookInfo();
+    }
+}
+
+std::string Student::typeOfUser() {
+    return "Student";
+}
 
 
 Professor::Professor(std::string name,
@@ -81,7 +90,6 @@ Professor::Professor(std::string name,
     name_ = name;
     id_ = username;
     password_ = password;
-    type_ = "Professor";
 
     list_of_books_ = borrowed_books;
     cleared_fine_ = fines[0];
@@ -141,6 +149,18 @@ void Professor::clearFineAmount(double amount) {
     std::cout << "Remaining fine is: " << fine_amount_+prev_fine_-cleared_fine_ <<"\n\n";
 }
 
+void Professor::listIssuedBooks() {
+    auto book_it_ = list_of_books_.begin();
+
+    for (; book_it_ != list_of_books_.end(); book_it_++) {
+        book_it_->displayBookInfo();
+    }
+}
+
+
+std::string Professor::typeOfUser() {
+    return "Professor";
+}
 
 
 Librarian::Librarian(std::string name,
@@ -151,6 +171,9 @@ Librarian::Librarian(std::string name,
     name_ = name;
     id_ = username;
     password_ = password;
-    type_ = "Librarian";
     list_of_users_ = database;
+}
+
+std::string Librarian::typeOfUser() {
+    return "Librarian";
 }

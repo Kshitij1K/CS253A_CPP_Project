@@ -1,9 +1,10 @@
 #pragma once
 #include <user.hpp>
-#include<string>
-#include<vector>
+#include <string>
+#include <vector>
 
 class UserDatabase {
+    public:
     UserDatabase(BookDatabase book_database);
     
     void addUser(Professor prof);
@@ -17,7 +18,7 @@ class UserDatabase {
     void deleteUser(std::string username);
     
     std::shared_ptr<std::list<User>> searchUserByName(std::string name);
-    const User* searchUserByUsername(std::string username);
+    User* searchUserByUsername(std::string username);
 
     private:
     std::list<Student> list_of_students_;

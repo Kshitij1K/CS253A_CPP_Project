@@ -59,16 +59,19 @@ void LoginState::run(Library* library) {
             switch (stoi(types[index]))
             {
             case 1:
+                library->current_user = library->user_database.searchUserByUsername(*username_iter);
                 library->changeState(&StudentAccessState::getInstance());
                 return;
             
             case 2:
+                library->current_user = library->user_database.searchUserByUsername(*username_iter);
                 library->changeState(&ProfessorAccessState::getInstance());
                 return;
 
             case 3:
+                library->current_user = library->user_database.searchUserByUsername(*username_iter);
                 library->changeState(&LibrarianAccessState::getInstance());
-                  return;
+                return;
             }
 
         }

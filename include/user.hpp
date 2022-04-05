@@ -8,11 +8,12 @@
 class UserDatabase;
 
 class User {
+    public:
+    virtual std::string typeOfUser() = 0;
     protected:
     std::string name_;
     std::string id_;
     std::string password_;
-    std::string type_;
     friend class UserDatabase;
 };
 
@@ -26,6 +27,8 @@ class Professor : public User {
     void calculateFine();
     void clearFineAmount(double amount);
     Book returnBook(std::list<Book>::iterator book_to_clear);
+    void listIssuedBooks();
+    std::string typeOfUser() override;
 
     private:
     double calculateBookWiseFine(Book& book);
@@ -45,6 +48,8 @@ class Student : public User {
     void calculateFine();
     Book returnBook(std::list<Book>::iterator book_to_clear);
     void clearFineAmount(double amount);
+    void listIssuedBooks();
+    std::string typeOfUser() override;
 
     private:
     double calculateBookWiseFine(Book& book);
@@ -60,6 +65,7 @@ class Librarian: public User{
               std::string username,
               std::string password,
               UserDatabase* database);
+    std::string typeOfUser() override;
     
     private:
     UserDatabase* list_of_users_;

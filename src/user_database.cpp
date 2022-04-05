@@ -258,7 +258,7 @@ void UserDatabase::deleteUser(std::string username) {
     std::cout << "No such User Found!\n\n";
 }
 
-const User* UserDatabase::searchUserByUsername(std::string username) {
+User* UserDatabase::searchUserByUsername(std::string username) {
     auto lib_it_ = list_of_librarians_.begin();
     
     for (;lib_it_ != list_of_librarians_.end(); lib_it_++){

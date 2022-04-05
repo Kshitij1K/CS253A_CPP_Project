@@ -31,6 +31,7 @@ class BookDatabase {
     std::list<std::pair<Book, bool>>::iterator searchBookByISBN(std::string isbn);
     bool isBookAvailable(std::string isbn);
     void bookRequest(std::string isbn, bool is_stock_over);
+    void listAllBooks();
 
     private:
     std::list<std::pair<Book, bool>> list_of_books_;
