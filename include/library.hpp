@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 #include <string>
-#include <book.hpp>
-#include <user.hpp>
+#include <book_database.hpp>
+#include <user_database.hpp>
 
 class Library;
 

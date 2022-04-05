@@ -13,10 +13,9 @@ void StudentAccessState::run(Library* library) {
     // library->current_state_ = NULL;
     std::cout << "Please enter the command you wish to execute."
                  "Available commands are \n"
-                 "1) ALLBOOKLIST (Will display all books available for issue)\n"
+                 "1) ALLBOOKLIST (Will display all books)\n"
                  "2) ISSUEDBOOKLIST (Will display books you have issued)\n"
-                 "3) ISBOOKAVAILABLE <ISBN> (Will check whether the book with this particular ISBN is available for issue or not)\n"
-                //  "4) ISSUEBOOK <ISBN> (Will issue this book to you if it is available)\n"
+                 "3) ISBOOKAVAILABLE <ISBN> (Will check  whether the book with this particular ISBN is available for issue or not)\n"
                  "4) GETFINE (Will display book wise and total fine you have accumulated)\n"
                  "5) LOGOUT (Will exit the software)\n" //Done
                  "6) EXIT (Will exit the software)\n"; // Done

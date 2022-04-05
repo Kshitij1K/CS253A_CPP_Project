@@ -1,5 +1,20 @@
 #include <user.hpp>
 
+Student::Student(std::string name,
+                std::string username,
+                std::string password,
+                std::list<Book> borrowed_books,
+                std::vector<double> fines) {
+
+    name_ = name;
+    id_ = username;
+    password_ = password;
+
+    list_of_books_ = borrowed_books;
+    cleared_fine_ = fines[0];
+    prev_fine_ = fines[1];
+}
+
 double Student::calculateBookWiseFine(Book& book) {
     std::time_t t = std::time(0);
     std::tm* today = std::localtime(&t);
@@ -56,6 +71,21 @@ void Student::clearFineAmount(double amount) {
 
 
 
+Professor::Professor(std::string name,
+                std::string username,
+                std::string password,
+                std::list<Book> borrowed_books,
+                std::vector<double> fines) {
+
+    name_ = name;
+    id_ = username;
+    password_ = password;
+
+    list_of_books_ = borrowed_books;
+    cleared_fine_ = fines[0];
+    prev_fine_ = fines[1];
+}
+
 double Professor::calculateBookWiseFine(Book& book) {
     std::time_t t = std::time(0);
     std::tm* today = std::localtime(&t);
@@ -107,4 +137,17 @@ Book Professor::returnBook(std::list<Book>::iterator book_to_clear) {
 void Professor::clearFineAmount(double amount) {
     cleared_fine_ += amount;
     std::cout << "Remaining fine is: " << fine_amount_+prev_fine_-cleared_fine_ <<"\n\n";
+}
+
+
+
+Librarian::Librarian(std::string name,
+                std::string username,
+                std::string password,
+                UserDatabase* database) {
+
+    name_ = name;
+    id_ = username;
+    password_ = password;
+    list_of_users_ = database;
 }

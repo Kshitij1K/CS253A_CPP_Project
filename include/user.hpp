@@ -1,12 +1,28 @@
 #pragma once
-#include <user_base.hpp>
-#include <book.hpp>
+#include <book_database.hpp>
 #include <cmath>
 #include <iostream>
 #define SECS_IN_DAY 86400
 
+class UserDatabase;
+
+class User {
+    private:
+    std::string name_;
+    std::string id_;
+    std::string password_;
+    std::string type_;
+    friend class UserDatabase;
+};
+
 class Professor : public User {
     public:
+    Professor(std::string name,
+                std::string username,
+                std::string password,
+                std::string type,
+                std::list<Book> borrowed_books,
+                std::vector<double> fines);
     void calculateFine();
     void clearFineAmount(double amount);
     Book returnBook(std::list<Book>::iterator book_to_clear);
@@ -21,6 +37,12 @@ class Professor : public User {
 
 class Student : public User {
     public:
+    Student(std::string name,
+                std::string username,
+                std::string password,
+                std::string type,
+                std::list<Book> borrowed_books,
+                std::vector<double> fines);
     void calculateFine();
     Book returnBook(std::list<Book>::iterator book_to_clear);
     void clearFineAmount(double amount);
@@ -34,7 +56,13 @@ class Student : public User {
 };
 
 class Librarian: public User{
+    public:
+    Librarian(std::string name,
+              std::string username,
+              std::string password,
+              std::string type,
+              UserDatabase* database);
+    
     private:
-    UserDatabase list_of_students_;
-    UserDatabase list_of_professors_;
+    UserDatabase* list_of_users_;
 };

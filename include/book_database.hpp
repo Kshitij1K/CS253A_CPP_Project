@@ -25,8 +25,9 @@ class BookDatabase {
     void addBook();
     void updateBook();
     void deleteBook();
-    Book searchBook(std::string title);
+    Book searchBookByTitle(std::string title);
 
     private:
     std::list<Book> list_of_books_;
+    
 };
