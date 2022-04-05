@@ -9,6 +9,7 @@ Student::Student(std::string name,
     name_ = name;
     id_ = username;
     password_ = password;
+    type_ = "Student";
 
     list_of_books_ = borrowed_books;
     cleared_fine_ = fines[0];
@@ -23,12 +24,12 @@ double Student::calculateBookWiseFine(Book& book) {
     today->tm_sec = 0;
     today->tm_hour = 1;
 
-    auto due_date = book.showDueDate();
-    double difference = std::difftime(std::mktime(today), std::mktime(&due_date)) / SECS_IN_DAY;
-    long long int days_since_due = std::floor(difference);
+    auto issue_date = book.getDateOfIssue();
+    double difference = std::difftime(std::mktime(today), std::mktime(&issue_date)) / SECS_IN_DAY;
+    long long int days_since_issue = std::floor(difference);
 
-    double fine = 0;
-    if (days_since_due >= 0) fine = days_since_due*2;
+    double fine;
+    if (days_since_issue > 30) fine = (days_since_issue-30)*2;
     std::cout << "Fine for this book is Rs " << std::to_string(fine) <<"\n\n\n";
     return fine;
 }
@@ -80,6 +81,7 @@ Professor::Professor(std::string name,
     name_ = name;
     id_ = username;
     password_ = password;
+    type_ = "Professor";
 
     list_of_books_ = borrowed_books;
     cleared_fine_ = fines[0];
@@ -94,12 +96,12 @@ double Professor::calculateBookWiseFine(Book& book) {
     today->tm_sec = 0;
     today->tm_hour = 1;
 
-    auto due_date = book.showDueDate();
-    double difference = std::difftime(std::mktime(today), std::mktime(&due_date)) / SECS_IN_DAY;
-    long long int days_since_due = std::floor(difference);
+    auto issue_date = book.getDateOfIssue();
+    double difference = std::difftime(std::mktime(today), std::mktime(&issue_date)) / SECS_IN_DAY;
+    long long int days_since_issue = std::floor(difference);
 
-    double fine = 0;
-    if (days_since_due >= 0) fine = days_since_due*5;
+    double fine;
+    if (days_since_issue > 30) fine = (days_since_issue-30)*2;
     std::cout << "Fine for this book is Rs " << std::to_string(fine) <<"\n\n\n";
     return fine;
 }
@@ -149,5 +151,6 @@ Librarian::Librarian(std::string name,
     name_ = name;
     id_ = username;
     password_ = password;
+    type_ = "Librarian";
     list_of_users_ = database;
 }

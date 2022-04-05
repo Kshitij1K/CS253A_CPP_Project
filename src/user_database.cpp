@@ -1,5 +1,7 @@
 #include <user_database.hpp>
 
+typedef std::vector<std::vector<std::tuple<int, int, int>>> issue_dates;
+
 UserDatabase::UserDatabase(BookDatabase book_database) {
     std::vector<std::string> student_names = {"Kshitij Kabeer",
                                               "Ankit Lakhiwal",
@@ -25,7 +27,7 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
                                                "kmurli"};
 
     std::vector<std::string> lib_usernames = {"librarian",
-                                                    "sumana"};
+                                              "sumana"};
 
 
     std::vector<std::string> student_passwords = {"abc",
@@ -62,19 +64,39 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
                                                    {2, 11},
                                                    {0, 0}};
 
+    issue_dates student_borrow_dates = {{{25,12,2021}, {25,12,2021}},
+                                        {{30,3,2022}, {1,1,2022}, {2,3,2022}},
+                                        {{2,2,2022}, {15,3,2022}},
+                                        {{21,9,2021}, {30,1,2022}},
+                                        {{7,12,2021}}};
+
+    issue_dates professor_borrow_dates = {{{20, 2, 2022}, {22,1,2022}, {1,1,2021}},
+                                          {{1,12,2021}},
+                                          {{25,3,2022}, {25,3,2022}}};
+
     for (int i = 0; i<student_names.size(); i++) {
         std::list<Book> borrowed_books;
 
+        int count = 0;
         for (auto it_:student_borrowed_books[i]) {
             auto book = borrowed_books.begin();
             std::advance(book, it_);
+            
+            std::tm issue_date;
+            issue_date.tm_year = std::get<0>(student_borrow_dates[i][count]);
+            issue_date.tm_mon = std::get<1>(student_borrow_dates[i][count]);
+            issue_date.tm_mday = std::get<2>(student_borrow_dates[i][count]);
+            issue_date.tm_min = 1;
+            count++;
+
+            book->bookRequest(issue_date);
+
             borrowed_books.push_back(*book);
         }
 
         Student student(student_names[i],
                         student_usernames[i],
                         student_passwords[i],
-                        "Student",
                         borrowed_books,
                         student_fines[i]);
         
@@ -84,18 +106,28 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
     for (int i = 0; i<prof_names.size(); i++) {
         std::list<Book> borrowed_books;
 
+        int count;
         for (auto it_:professor_borrowed_books[i]) {
             auto book = borrowed_books.begin();
             std::advance(book, it_);
+
+            std::tm issue_date;
+            issue_date.tm_year = std::get<0>(professor_borrow_dates[i][count]);
+            issue_date.tm_mon = std::get<1>(professor_borrow_dates[i][count]);
+            issue_date.tm_mday = std::get<2>(professor_borrow_dates[i][count]);
+            issue_date.tm_min = 1;
+            count++;
+
+            book->bookRequest(issue_date);
+
             borrowed_books.push_back(*book);
         }
 
         Professor professor(prof_names[i],
-                        prof_usernames[i],
-                        prof_passwords[i],
-                        "Professor",
-                        borrowed_books,
-                        prof_fines[i]);
+                            prof_usernames[i],
+                            prof_passwords[i],
+                            borrowed_books,
+                            prof_fines[i]);
         
         list_of_professors_.push_back(professor);
     }                                     
@@ -104,7 +136,6 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
         Librarian librarian(lib_names[i],
                             lib_usernames[i],
                             lib_passwords[i],
-                            "Librarian",
                             this);
 
         list_of_librarians_.push_back(librarian);

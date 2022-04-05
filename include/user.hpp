@@ -2,12 +2,13 @@
 #include <book_database.hpp>
 #include <cmath>
 #include <iostream>
+#include <vector>
 #define SECS_IN_DAY 86400
 
 class UserDatabase;
 
 class User {
-    private:
+    protected:
     std::string name_;
     std::string id_;
     std::string password_;
@@ -20,7 +21,6 @@ class Professor : public User {
     Professor(std::string name,
                 std::string username,
                 std::string password,
-                std::string type,
                 std::list<Book> borrowed_books,
                 std::vector<double> fines);
     void calculateFine();
@@ -40,7 +40,6 @@ class Student : public User {
     Student(std::string name,
                 std::string username,
                 std::string password,
-                std::string type,
                 std::list<Book> borrowed_books,
                 std::vector<double> fines);
     void calculateFine();
@@ -60,7 +59,6 @@ class Librarian: public User{
     Librarian(std::string name,
               std::string username,
               std::string password,
-              std::string type,
               UserDatabase* database);
     
     private:
