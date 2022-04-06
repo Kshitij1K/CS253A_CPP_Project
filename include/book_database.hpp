@@ -14,6 +14,7 @@ class Date {
     Date();
     Date(int day, int month, int year);
     long int getDifference(Date& date);
+    static int days_shifted;
 
     private:
     int day_;
@@ -30,6 +31,7 @@ class Book {
     void bookRequest(Date date_of_issue);
     void displayBookInfo();
     Date getDateOfIssue();
+    std::string getISBN();
 
     private:
     std::string title;
@@ -50,6 +52,7 @@ class BookDatabase {
     std::shared_ptr<std::list<Book>> searchBookByTitle(std::string title);
     std::list<std::pair<Book, bool>>::iterator searchBookByISBN(std::string isbn);
     bool isBookAvailable(std::string isbn);
+    void updateAvailability(std::string isbn, bool is_available);
     bool doesBookExist(std::string isbn);
     void bookRequest(std::string isbn, bool is_stock_over);
     std::vector<Book> getAllBooks();

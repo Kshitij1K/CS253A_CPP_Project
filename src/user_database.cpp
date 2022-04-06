@@ -203,3 +203,30 @@ bool UserDatabase::doesUserExist (std::string username) {
     return true;
 }
 
+void UserDatabase::checkIssuedUsers (std::string isbn) {
+    std::cout << "The list of users this book is issued to are: \n";
+    
+    for (auto user_it_:list_of_users_) {
+        if (user_it_.type_ == UserType::kStudent) {
+            auto user_to_check = dynamic_cast<Student*>(&user_it_);
+            
+            int num_books = 0;
+            for (auto book_it_:user_to_check->list_of_books_) {
+                if (book_it_.getISBN() == isbn) num_books++;
+            }
+
+            if (num_books > 0) std::cout << num_books << " of these books have been issued to the student " << user_to_check->name_ <<", username: " <<user_to_check->id_ <<"\n";
+        }
+
+        else if (user_it_.type_ == UserType::kProfessor) {
+            auto user_to_check = dynamic_cast<Professor*>(&user_it_);
+            
+            int num_books = 0;
+            for (auto book_it_:user_to_check->list_of_books_) {
+                if (book_it_.getISBN() == isbn) num_books++;
+            }
+
+            if (num_books > 0) std::cout << num_books << " of these books have been issued to the professor " << user_to_check->name_ <<", username: " <<user_to_check->id_ <<"\n";
+        }
+    }
+}

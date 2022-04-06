@@ -51,17 +51,20 @@ void Student::calculateFine() {
     fine_amount_ = total_current_fine + prev_fine_ - cleared_fine_;
 }
 
-Book Student::returnBook(std::list<Book>::iterator book_to_clear) {
-    list_of_books_.erase(book_to_clear);
-    std::cout << "The following book has been marked returned:\n";
-    book_to_clear->displayBookInfo();
+void Student::returnBook(std::string isbn) {
+    auto book_it_ = list_of_books_.begin();
 
-    prev_fine_ += calculateBookWiseFine(*book_to_clear);
+    for (; book_it_ != list_of_books_.end(); book_it_++) {
+        if (book_it_->getISBN() == isbn) break;
+    }
 
-    Book returned_book = *book_to_clear;
-    list_of_books_.erase(book_to_clear);
-    return returned_book;
-    // calculateFine();
+    prev_fine_ += calculateBookWiseFine(*book_it_);
+
+    if (book_it_ == list_of_books_.end()) {
+        std::cout << "User has not borrowed any books with this ISBN!\n\n";
+        return;
+    }
+    list_of_books_.erase(book_it_);
 }
 
 void Student::clearFineAmount(double amount) {
@@ -119,17 +122,20 @@ void Professor::calculateFine() {
     fine_amount_ = total_current_fine + prev_fine_ - cleared_fine_;
 }
 
-Book Professor::returnBook(std::list<Book>::iterator book_to_clear) {
-    list_of_books_.erase(book_to_clear);
-    std::cout << "The following book has been marked returned:\n";
-    book_to_clear->displayBookInfo();
+void Professor::returnBook(std::string isbn) {
+    auto book_it_ = list_of_books_.begin();
 
-    prev_fine_ += calculateBookWiseFine(*book_to_clear);
+    for (; book_it_ != list_of_books_.end(); book_it_++) {
+        if (book_it_->getISBN() == isbn) break;
+    }
 
-    Book returned_book = *book_to_clear;
-    list_of_books_.erase(book_to_clear);
-    return returned_book;
-    // calculateFine();
+    prev_fine_ += calculateBookWiseFine(*book_it_);
+
+    if (book_it_ == list_of_books_.end()) {
+        std::cout << "User has not borrowed any books with this ISBN!\n\n";
+        return;
+    }
+    list_of_books_.erase(book_it_);
 }
 
 void Professor::clearFineAmount(double amount) {

@@ -17,6 +17,7 @@ class UserDatabase {
     std::shared_ptr<std::list<User>> searchUserByName(std::string name);
     std::list<User>::iterator searchUserByUsername(std::string username);
     bool doesUserExist(std::string username);
+    void checkIssuedUsers (std::string isbn);
 
     private:
     std::list<User> list_of_users_;

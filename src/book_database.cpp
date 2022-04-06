@@ -1,5 +1,7 @@
 #include <book_database.hpp>
 
+int Date::days_shifted = 0;
+
 Date::Date() {
     std::time_t time_now = std::time(0);
     std::tm* tm_time_now = std::localtime(&time_now);
@@ -35,7 +37,7 @@ long int Date::getDifference(Date& date) {
     for (int i=0; i<date.month_-1; i++) num_days_prev_date += days_in_a_month[i];
     num_days_prev_date += prev_date_leap_years;
 
-    return num_days_curr_date - num_days_prev_date;
+    return num_days_curr_date - num_days_prev_date + days_shifted;
 }
 
 BookDatabase::BookDatabase() {
@@ -170,6 +172,15 @@ bool BookDatabase::isBookAvailable(std::string isbn) {
     return book->second;
 }
 
+void BookDatabase::updateAvailability(std::string isbn, bool availability) {
+    auto book_it_ = searchBookByISBN(isbn);
+    if (book_it_ == list_of_books_.end()) {
+        std::cout << "A book with this ISBN doesn't exist!";
+        return;
+    }
+    book_it_->second = availability;
+}
+
 bool BookDatabase::doesBookExist(std::string isbn) {
     auto book = searchBookByISBN(isbn);
     if (book == list_of_books_.end()) return false;
@@ -226,4 +237,8 @@ void Book::displayBookInfo() {
 
 Date Book::getDateOfIssue() {
     return date_of_issue;
+}
+
+std::string Book::getISBN() {
+    return isbn;
 }

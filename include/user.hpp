@@ -36,7 +36,8 @@ class Professor : public User {
                 std::vector<double> fines);
     void calculateFine();
     void clearFineAmount(double amount);
-    Book returnBook(std::list<Book>::iterator book_to_clear);
+    void returnBook(std::string isbn);
+    void issueBook(Book book);
     void listIssuedBooks();
 
     private:
@@ -45,6 +46,7 @@ class Professor : public User {
     double cleared_fine_ = 0;
     double prev_fine_;
     std::list<Book> list_of_books_;
+    friend class UserDatabase;
 };
 
 class Student : public User {
@@ -55,8 +57,9 @@ class Student : public User {
                 std::list<Book> borrowed_books,
                 std::vector<double> fines);
     void calculateFine();
-    Book returnBook(std::list<Book>::iterator book_to_clear);
+    void returnBook(std::string isbn);
     void clearFineAmount(double amount);
+    void issueBook(Book book);
     void listIssuedBooks();
 
     private:
@@ -65,6 +68,7 @@ class Student : public User {
     double cleared_fine_ = 0;
     double prev_fine_;
     std::list<Book> list_of_books_;
+    friend class UserDatabase;
 };
 
 class Librarian: public User{
@@ -75,4 +79,5 @@ class Librarian: public User{
     
     private:
     UserDatabase* list_of_users_;
+    friend class UserDatabase;
 };
