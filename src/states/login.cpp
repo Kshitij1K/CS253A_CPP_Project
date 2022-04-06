@@ -43,19 +43,21 @@ void LoginState::run(Library* library) {
             std::string entered_password = split_command[2];
             // auto username_iter = std::find(library->user_database..begin(), usernames.end(), entered_username);
 
-            auto username_found = library->user_database.searchUserByUsername(entered_username);
+            // auto username_found = library->user_database.searchUserByUsername(entered_username);
 
-            if (username_found == NULL) {
+            if (!library->user_database.doesUserExist(entered_username)) {
                 std::cout << "No such user exists! Please try again.\n";
                 return;
             } 
+
+            auto username_found = library->user_database.searchUserByUsername(entered_username);
 
             if (!username_found->checkCredentials(entered_password)) {
                 std::cout << "Password Incorrect! Please try again.\n";
                 return;
             }
 
-            library->current_user = username_found;
+            library->current_user = &(*username_found);
 
             switch (username_found->typeOfUser())
             {

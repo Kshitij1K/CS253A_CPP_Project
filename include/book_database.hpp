@@ -45,7 +45,7 @@ class BookDatabase {
     public:
     BookDatabase();
     void addBook(Book book);
-    void updateBook(std::string isbn, Book new_book);
+    void updateBook(std::string isbn, Book new_book, std::string availability);
     void deleteBook(std::string isbn);
     std::shared_ptr<std::list<Book>> searchBookByTitle(std::string title);
     std::list<std::pair<Book, bool>>::iterator searchBookByISBN(std::string isbn);

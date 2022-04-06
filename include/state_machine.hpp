@@ -53,7 +53,6 @@ class StudentAccessState : public State {
 
     private:
     Student* student_;
-    // Student student_;
 };
 
 class LibrarianAccessState : public State {
@@ -65,11 +64,10 @@ class LibrarianAccessState : public State {
     void exit(Library* library);
 
     private:
+    void addUser(Library* library);
+    void modifyUser(Library* library);
+    void addBook(Library* library);
+    void modifyBook(Library* library);
     Librarian* librarian_;
-    void addUser(std::string username);
-    void modifyUser(std::string username);
-    void addBook(std::string isbn);
-    void modifyBook(std::string isbn);
-    // Librarian librarian_;
 };
 

@@ -147,13 +147,11 @@ void Professor::listIssuedBooks() {
 
 Librarian::Librarian(std::string name,
                 std::string username,
-                std::string password,
-                UserDatabase* database) {
+                std::string password) {
 
     name_ = name;
     id_ = username;
     password_ = password;
     type_ = UserType::kLibrarian;
 
-    list_of_users_ = database;
 }

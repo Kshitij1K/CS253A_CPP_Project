@@ -93,21 +93,35 @@ void BookDatabase::addBook(Book book){
     }
 
     list_of_books_.push_back({book, true});
-    std::cout << "Adding new book successful. The new book added is\n";
-    book.displayBookInfo();
+    std::cout << "Adding new book successful.\n";
 }
 
-void BookDatabase::updateBook(std::string isbn, Book new_book) {
+void BookDatabase::updateBook(std::string isbn, Book new_book, std::string availability) {
     auto existing_book = searchBookByISBN(isbn);
 
     if (existing_book == list_of_books_.end()) {
-        std::cout << "Book with the given ISBN doesn't exist! Updating book failed.\n\n";
+        std::cout << "Book to update with the given ISBN doesn't exist! Updating book failed.\n\n";
         return;
     }
 
-    existing_book->first = new_book;
-    std::cout << "Updating book successful. The new details of the book are\n";
-    new_book.displayBookInfo();
+    if (new_book.isbn != "") {
+        auto same_book = searchBookByISBN(new_book.isbn);
+        if (same_book != list_of_books_.end()) {
+            std::cout << "You want to modify the book's ISBN, but a book with the newly entered ISBN already exists! Updating book failed.\n\n";
+            return;
+        }
+
+        existing_book->first.isbn = new_book.isbn;
+    }
+
+    if (new_book.title != "") existing_book->first.title = new_book.title;
+    if (new_book.publication != "") existing_book->first.publication = new_book.title;
+    if (new_book.author != "") existing_book->first.author = new_book.author;
+
+    if (availability == "1") existing_book->second = true;
+    else if (availability == "2") existing_book->second = false;
+
+    std::cout << "Updating book successful.\n\n";
 }
 
 void BookDatabase::deleteBook(std::string isbn) {

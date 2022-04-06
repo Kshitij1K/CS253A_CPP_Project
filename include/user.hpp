@@ -71,8 +71,7 @@ class Librarian: public User{
     public:
     Librarian(std::string name,
               std::string username,
-              std::string password,
-              UserDatabase* database);
+              std::string password);
     
     private:
     UserDatabase* list_of_users_;

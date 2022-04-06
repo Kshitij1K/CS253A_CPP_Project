@@ -98,7 +98,7 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
                         borrowed_books,
                         student_fines[i]);
         
-        list_of_students_.push_back(student);
+        list_of_users_.push_back(student);
     } 
 
     for (int i = 0; i<prof_names.size(); i++) {
@@ -124,17 +124,16 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
                             borrowed_books,
                             prof_fines[i]);
         
-        list_of_professors_.push_back(professor);
+        list_of_users_.push_back(professor);
     }                                     
 
 
     for (int i = 0; i<lib_names.size(); i++) {
         Librarian librarian(lib_names[i],
                             lib_usernames[i],
-                            lib_passwords[i],
-                            this);
+                            lib_passwords[i]);
 
-        list_of_librarians_.push_back(librarian);
+        list_of_users_.push_back(librarian);
     }                                     
     
 }
@@ -142,19 +141,7 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
 std::shared_ptr<std::list<User>> UserDatabase::searchUserByName(std::string name) {
     auto result = std::make_shared<std::list<User>>();
     
-    for (auto user_:list_of_librarians_){
-        if (user_.name_ == name) {
-            result->push_back(user_);
-        }
-    }
-
-    for (auto user_:list_of_professors_){
-        if (user_.name_ == name) {
-            result->push_back(user_);
-        }
-    }
-
-    for (auto user_:list_of_librarians_){
+    for (auto user_:list_of_users_){
         if (user_.name_ == name) {
             result->push_back(user_);
         }
@@ -163,122 +150,56 @@ std::shared_ptr<std::list<User>> UserDatabase::searchUserByName(std::string name
     return result;
 }
 
-void UserDatabase::addUser(Student stud) {
-    list_of_students_.push_back(stud);
+void UserDatabase::addUser(User user) {
+    if (doesUserExist(user.id_)) {
+        std::cout << "User with this username already exists! Please enter a unique username.\n";
+        return;
+    }
+    list_of_users_.push_back(user);
     std::cout << "User added successfully.\n\n";
 }
 
-void UserDatabase::addUser(Professor prof) {
-    list_of_professors_.push_back(prof);
-    std::cout << "User added successfully.\n\n";
-}
-
-void UserDatabase::addUser(Librarian lib) {
-    list_of_librarians_.push_back(lib);
-    std::cout << "User added successfully.\n\n";
-}
-
-void UserDatabase::updateUser(std::string username, Professor new_prof_data) {
-    auto user_it_ = list_of_professors_.begin();
-    
-    for (;user_it_ != list_of_professors_.end(); user_it_++){
-        if (user_it_->id_ == username) {
-            *user_it_ = new_prof_data;
-            std::cout << "User updated successfully\n\n";
-            return;
-        }
+void UserDatabase::updateUser(std::string old_username,
+                              std::string new_username,
+                              std::string new_password,
+                              std::string new_name) {
+    auto user_it_ = searchUserByUsername(old_username);
+    if (user_it_ == list_of_users_.end()) {
+        std::cout << "No such User Found! Updating user failed\n\n";
+        return;
     }
 
-    std::cout << "No such User Found!\n\n";
-}
-
-void UserDatabase::updateUser(std::string username, Student new_stud_data) {
-    auto user_it_ = list_of_students_.begin();
+    if (new_username != "") user_it_->id_ = new_username;
+    if (new_password != "") user_it_->password_ = new_password;
+    if (new_name != "") user_it_->name_ = new_name;
     
-    for (;user_it_ != list_of_students_.end(); user_it_++){
-        if (user_it_->id_ == username) {
-            *user_it_ = new_stud_data;
-            std::cout << "User updated successfully\n\n";
-            return;
-        }
-    }
-
-    std::cout << "No such User Found!\n\n";
-}
-
-void UserDatabase::updateUser(std::string username, Librarian new_lib_data) {
-    auto user_it_ = list_of_librarians_.begin();
-    
-    for (;user_it_ != list_of_librarians_.end(); user_it_++){
-        if (user_it_->id_ == username) {
-            *user_it_ = new_lib_data;
-            std::cout << "User updated successfully\n\n";
-            return;
-        }
-    }
-
-    std::cout << "No such User Found!\n\n";
+    std::cout << "User updated successfully.\n\n";
 }
 
 void UserDatabase::deleteUser(std::string username) {
-    auto lib_it_ = list_of_librarians_.begin();
-    
-    for (;lib_it_ != list_of_librarians_.end(); lib_it_++){
-        if (lib_it_->id_ == username) {
-            list_of_librarians_.erase(lib_it_);
-            std::cout << "User deleted successfully\n\n";
-            return;
-        }
+    auto user_it_ = searchUserByUsername(username);
+    if (user_it_ == list_of_users_.end()) {
+        std::cout << "No such User Found!\n\n";
+        return;
     }
 
-    auto prof_it_ = list_of_professors_.begin();
-    
-    for (;prof_it_ != list_of_professors_.end(); prof_it_++){
-        if (prof_it_->id_ == username) {
-            list_of_professors_.erase(prof_it_);
-            std::cout << "User deleted successfully\n\n";
-            return;
-        }
-    }
-
-    auto student_it_ = list_of_students_.begin();
-    
-    for (;student_it_ != list_of_students_.end(); student_it_++){
-        if (student_it_->id_ == username) {
-            list_of_students_.erase(student_it_);
-            std::cout << "User deleted successfully\n\n";
-            return;
-        }
-    }
-
-    std::cout << "No such User Found!\n\n";
+    list_of_users_.erase(user_it_);
+    std::cout << "User deleted successfully.\n\n";
 }
 
-User* UserDatabase::searchUserByUsername(std::string username) {
-    auto lib_it_ = list_of_librarians_.begin();
-    
-    for (;lib_it_ != list_of_librarians_.end(); lib_it_++){
-        if (lib_it_->id_ == username) {
-            return &(*lib_it_);
-        }
-    }
+std::list<User>::iterator UserDatabase::searchUserByUsername(std::string username) {
+    auto user_it_ = list_of_users_.begin();
 
-    auto prof_it_ = list_of_professors_.begin();
-    
-    for (;prof_it_ != list_of_professors_.end(); prof_it_++){
-        if (prof_it_->id_ == username) {
-            return &(*prof_it_);
-        }
+    for (; user_it_ != list_of_users_.end(); user_it_++) {
+        if (user_it_->id_ == username) return user_it_;
     }
-
-    auto student_it_ = list_of_students_.begin();
     
-    for (;student_it_ != list_of_students_.end(); student_it_++){
-        if (student_it_->id_ == username) {
-            return &(*student_it_);
-        }
-    }
+    return user_it_;
+}
 
-    return NULL;
+bool UserDatabase::doesUserExist (std::string username) {
+    auto user_it_ = searchUserByUsername(username);
+    if (user_it_ == list_of_users_.end()) return false;
+    return true;
 }
 
