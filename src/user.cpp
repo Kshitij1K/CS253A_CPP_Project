@@ -80,6 +80,10 @@ void Student::listIssuedBooks() {
     }
 }
 
+void Student::issueBook(Book book) {
+    list_of_books_.push_back(book);
+}
+
 Professor::Professor(std::string name,
                 std::string username,
                 std::string password,
@@ -149,6 +153,10 @@ void Professor::listIssuedBooks() {
     for (; book_it_ != list_of_books_.end(); book_it_++) {
         book_it_->displayBookInfo();
     }
+}
+
+void Professor::issueBook(Book book) {
+    list_of_books_.push_back(book);
 }
 
 Librarian::Librarian(std::string name,

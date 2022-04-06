@@ -20,13 +20,14 @@ void LibrarianAccessState::run(Library* library) {
                 "5)  UPDATEBOOK (Will update a book, prompts to enter other details will follow)\n" // Done
                 "6)  DELETEBOOK <isbn> (Will delete a book with this ISBN. This process is irreversible!\n" // Done
                 "7)  ALLBOOKLIST (Will list all books)\n" // Done
-                "8)  CHECKBOOKSTATUS <isbn> (Check the status of this book, like whom is it issued to or whether it is available for issue or not\n" // Done
-                "9)  CHECKISSUEDBOOKS <username> (Check the books issued to this username)\n" // Done
-                "10) ISSUEBOOK <username> <isbn> (Issue the book with this ISBN, to the user having this username)\n" // Done
-                "11) RETURNBOOK <username> <isbn> (Mark book with this ISBN as being returned by the user having this username)\n" // Done
-                "12) SHIFTCURRDATE <number-of-days> (This command is for testing purpose, it shifts the current date forward by this many days. You can also specify a negative number here.)\n" // Done
-                "13) LOGOUT (Will log you out)\n" // Done
-                "14) EXIT (Will exit the software)\n\n"; // Done
+                "8)  ALLUSERSLIST (Will list all users)\n" //Done
+                "9)  CHECKBOOKSTATUS <isbn> (Check the status of this book, like whom is it issued to or whether it is available for issue or not\n" // Done
+                "10) CHECKISSUEDBOOKS <username> (Check the books issued to this username)\n" // Done
+                "11) ISSUEBOOK <username> <isbn> (Issue the book with this ISBN, to the user having this username)\n" // Done
+                "12) RETURNBOOK <username> <isbn> (Mark book with this ISBN as being returned by the user having this username)\n" // Done
+                "13) SHIFTCURRDATE <number-of-days> (This command is for testing purpose, it shifts the current date forward by this many days. You can also specify a negative number here.)\n" // Done
+                "14) LOGOUT (Will log you out)\n" // Done
+                "15) EXIT (Will exit the software)\n\n"; // Done
 
   std::string command;
   std::getline(std::cin, command);
@@ -54,6 +55,12 @@ void LibrarianAccessState::run(Library* library) {
       for (auto book_it_:books) {
         book_it_.displayBookInfo();
       }
+      return;
+    }
+
+    if (split_command[0] == "ALLUSERLIST") {
+      std::cout << "Currently registered users are:\n";
+      library->user_database.listAllUsers();
       return;
     }
 
@@ -113,13 +120,13 @@ void LibrarianAccessState::run(Library* library) {
       std::cout << "The list of books issued by this user is\n";
       auto user = library->user_database.searchUserByUsername(entered_username);
 
-      if (user->typeOfUser() == UserType::kStudent) {
-        auto student = dynamic_cast<Student*>(&(*user));
+      if ((*user)->typeOfUser() == UserType::kStudent) {
+        auto student = dynamic_cast<Student*>(&(**user));
         student->listIssuedBooks();
       } 
 
       else {
-        auto professor = dynamic_cast<Professor*>(&(*user));
+        auto professor = dynamic_cast<Professor*>(&(**user));
         professor->listIssuedBooks();
       }
     }
@@ -132,6 +139,7 @@ void LibrarianAccessState::run(Library* library) {
                      "Please keep in mind that this doesn't change the date of issue of books, merely the current date.\n\n";
       } catch (std::invalid_argument) {
         std::cout << "Please enter a valid integer for the number of days.\n\n";
+      }
     }
 
     std::cout << "Incorrect Command Entered! Please enter the correct command, according to instructions.\n";
@@ -143,6 +151,11 @@ void LibrarianAccessState::run(Library* library) {
     if (split_command[0] == "ISSUEBOOK") {
       std::string entered_isbn = split_command[1];
       std::string entered_username = split_command[2];
+
+      if (!library->book_database.doesBookExist(entered_isbn)) {
+        std::cout << "No book exists with the given ISBN!\n\n";
+        return;
+      }
 
       if (!library->book_database.isBookAvailable(entered_isbn)) {
         std::cout << "This book is not available in stock and hence cannot be issued.\n\n";
@@ -157,20 +170,20 @@ void LibrarianAccessState::run(Library* library) {
       std::cout << "This book is available for issue. Type YES and hit Enter if this is the last piece available in stock (Any other text will be intrepreted as NO):\n";
       std::string answer;
       std::getline(std::cin, answer);
+
+      bool is_available = (answer == "YES") ? true:false;
       
-      auto book_to_issue = library->book_database.searchBookByISBN(entered_isbn);
+      // auto book_to_issue = library->book_database.searchBookByISBN(entered_isbn);
       auto user_to_issue = library->user_database.searchUserByUsername(entered_username);
       
-      if (user_to_issue->typeOfUser() == UserType::kStudent) {
-        auto student = dynamic_cast<Student*>(&(*user_to_issue));
-        student->issueBook(book_to_issue->first);
-        book_to_issue->second = (answer == "YES") ? false : true;
+      if ((*user_to_issue)->typeOfUser() == UserType::kStudent) {
+        auto student = dynamic_cast<Student*>(&(**user_to_issue));
+        student->issueBook(library->book_database.bookRequest(entered_isbn, is_available));
       }
 
-      if (user_to_issue->typeOfUser() == UserType::kProfessor) {
-        auto professor = dynamic_cast<Professor*>(&(*user_to_issue));
-        professor->issueBook(book_to_issue->first);
-        book_to_issue->second = (answer == "YES") ? false : true;
+      if ((*user_to_issue)->typeOfUser() == UserType::kProfessor) {
+        auto professor = dynamic_cast<Professor*>(&(**user_to_issue));
+        professor->issueBook(library->book_database.bookRequest(entered_isbn, is_available));
       }
 
     }
@@ -186,20 +199,21 @@ void LibrarianAccessState::run(Library* library) {
 
       auto user_for_return = library->user_database.searchUserByUsername(entered_username);
 
-      if (user_for_return->typeOfUser() == UserType::kStudent) {
-        auto student = dynamic_cast<Student*>(&(*user_for_return));
+      if ((*user_for_return)->typeOfUser() == UserType::kStudent) {
+        auto student = dynamic_cast<Student*>(&(**user_for_return));
         student->returnBook(entered_isbn);
         library->book_database.updateAvailability(entered_isbn, true);
       }
 
-      if (user_for_return->typeOfUser() == UserType::kProfessor) {
-        auto professor = dynamic_cast<Professor*>(&(*user_for_return));
+      if ((*user_for_return)->typeOfUser() == UserType::kProfessor) {
+        auto professor = dynamic_cast<Professor*>(&(**user_for_return));
         professor->returnBook(entered_isbn);
         library->book_database.updateAvailability(entered_isbn, true);
       }
-      std::cout << "Incorrect Command Entered! Please enter the correct command, according to instructions.\n";
       return;
     }
+    std::cout << "Incorrect Command Entered! Please enter the correct command, according to instructions.\n";
+    return;
   }
 }
 
@@ -319,6 +333,8 @@ void LibrarianAccessState::modifyBook(Library* library) {
 
   Book new_book(new_title, new_author, new_isbn, new_publication);
   library->book_database.updateBook(old_isbn, new_book, availability);
+  library->user_database.updateIssuedBooks(old_isbn, new_book);
+
 }
 
 void LibrarianAccessState::modifyUser(Library* library) {

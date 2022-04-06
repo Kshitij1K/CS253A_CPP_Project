@@ -188,17 +188,19 @@ bool BookDatabase::doesBookExist(std::string isbn) {
 }
 
 
-void BookDatabase::bookRequest(std::string isbn, bool is_stock_left) {
+Book BookDatabase::bookRequest(std::string isbn, bool is_stock_left) {
     auto book = searchBookByISBN(isbn);
 
-    if (book == list_of_books_.end()) {
-        std::cout << "Book with this ISBN doesn't exist!\n\n";
-        return;
-    }
+    // if (book == list_of_books_.end()) {
+    //     std::cout << "Book with this ISBN doesn't exist!\n\n";
+    //     return;
+    // }
     
     Date today;
-    book->first.bookRequest(today);
+    Book book_requested = book->first;
+    book_requested.bookRequest(today);
     book->second = is_stock_left;
+    return book_requested;
 }
 
 std::vector<Book> BookDatabase::getAllBooks() {

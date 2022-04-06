@@ -54,7 +54,7 @@ class BookDatabase {
     bool isBookAvailable(std::string isbn);
     void updateAvailability(std::string isbn, bool is_available);
     bool doesBookExist(std::string isbn);
-    void bookRequest(std::string isbn, bool is_stock_over);
+    Book bookRequest(std::string isbn, bool is_stock_over);
     std::vector<Book> getAllBooks();
 
     private:

@@ -92,11 +92,11 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
             count++;
         }
 
-        Student student(student_names[i],
-                        student_usernames[i],
-                        student_passwords[i],
-                        borrowed_books,
-                        student_fines[i]);
+        auto student = std::make_shared<Student>(student_names[i],
+                                                    student_usernames[i],
+                                                    student_passwords[i],
+                                                    borrowed_books,
+                                                    student_fines[i]);
         
         list_of_users_.push_back(student);
     } 
@@ -118,20 +118,20 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
             count++;
         }
 
-        Professor professor(prof_names[i],
-                            prof_usernames[i],
-                            prof_passwords[i],
-                            borrowed_books,
-                            prof_fines[i]);
+        auto professor = std::make_shared<Professor>(prof_names[i],
+                                                     prof_usernames[i],
+                                                     prof_passwords[i],
+                                                     borrowed_books,
+                                                     prof_fines[i]);
         
         list_of_users_.push_back(professor);
     }                                     
 
 
     for (int i = 0; i<lib_names.size(); i++) {
-        Librarian librarian(lib_names[i],
-                            lib_usernames[i],
-                            lib_passwords[i]);
+        auto librarian = std::make_shared<Librarian>(lib_names[i],
+                                                     lib_usernames[i],
+                                                     lib_passwords[i]);
 
         list_of_users_.push_back(librarian);
     }                                     
@@ -142,8 +142,8 @@ std::shared_ptr<std::list<User>> UserDatabase::searchUserByName(std::string name
     auto result = std::make_shared<std::list<User>>();
     
     for (auto user_:list_of_users_){
-        if (user_.name_ == name) {
-            result->push_back(user_);
+        if (user_->name_ == name) {
+            result->push_back(*user_);
         }
     }
 
@@ -155,7 +155,18 @@ void UserDatabase::addUser(User user) {
         std::cout << "User with this username already exists! Please enter a unique username.\n";
         return;
     }
-    list_of_users_.push_back(user);
+
+    if (user.type_ == UserType::kStudent) {
+        auto added_user = std::make_shared<Student>(dynamic_cast<Student&>(user));
+        list_of_users_.push_back(added_user);
+    } else if (user.type_ == UserType::kProfessor) {
+        auto added_user = std::make_shared<Professor>(dynamic_cast<Professor&>(user));
+        list_of_users_.push_back(added_user);
+    } else if (user.type_ == UserType::kLibrarian) {
+        auto added_user = std::make_shared<Librarian>(dynamic_cast<Librarian&>(user));
+        list_of_users_.push_back(added_user);
+    }
+
     std::cout << "User added successfully.\n\n";
 }
 
@@ -169,9 +180,9 @@ void UserDatabase::updateUser(std::string old_username,
         return;
     }
 
-    if (new_username != "") user_it_->id_ = new_username;
-    if (new_password != "") user_it_->password_ = new_password;
-    if (new_name != "") user_it_->name_ = new_name;
+    if (new_username != "") (*user_it_)->id_ = new_username;
+    if (new_password != "") (*user_it_)->password_ = new_password;
+    if (new_name != "") (*user_it_)->name_ = new_name;
     
     std::cout << "User updated successfully.\n\n";
 }
@@ -187,11 +198,11 @@ void UserDatabase::deleteUser(std::string username) {
     std::cout << "User deleted successfully.\n\n";
 }
 
-std::list<User>::iterator UserDatabase::searchUserByUsername(std::string username) {
+std::list<std::shared_ptr<User>>::iterator UserDatabase::searchUserByUsername(std::string username) {
     auto user_it_ = list_of_users_.begin();
 
     for (; user_it_ != list_of_users_.end(); user_it_++) {
-        if (user_it_->id_ == username) return user_it_;
+        if ((*user_it_)->id_ == username) return user_it_;
     }
     
     return user_it_;
@@ -205,10 +216,10 @@ bool UserDatabase::doesUserExist (std::string username) {
 
 void UserDatabase::checkIssuedUsers (std::string isbn) {
     std::cout << "The list of users this book is issued to are: \n";
-    
-    for (auto user_it_:list_of_users_) {
-        if (user_it_.type_ == UserType::kStudent) {
-            auto user_to_check = dynamic_cast<Student*>(&user_it_);
+    auto user_it_ = list_of_users_.begin();
+    for (; user_it_ != list_of_users_.end(); user_it_++) {
+        if ((*user_it_)->type_ == UserType::kStudent) {
+            auto user_to_check = dynamic_cast<Student*>(&(**user_it_));
             
             int num_books = 0;
             for (auto book_it_:user_to_check->list_of_books_) {
@@ -218,8 +229,8 @@ void UserDatabase::checkIssuedUsers (std::string isbn) {
             if (num_books > 0) std::cout << num_books << " of these books have been issued to the student " << user_to_check->name_ <<", username: " <<user_to_check->id_ <<"\n";
         }
 
-        else if (user_it_.type_ == UserType::kProfessor) {
-            auto user_to_check = dynamic_cast<Professor*>(&user_it_);
+        else if ((*user_it_)->type_ == UserType::kProfessor) {
+            auto user_to_check = dynamic_cast<Professor*>(&(**user_it_));
             
             int num_books = 0;
             for (auto book_it_:user_to_check->list_of_books_) {
@@ -227,6 +238,61 @@ void UserDatabase::checkIssuedUsers (std::string isbn) {
             }
 
             if (num_books > 0) std::cout << num_books << " of these books have been issued to the professor " << user_to_check->name_ <<", username: " <<user_to_check->id_ <<"\n";
+        }
+    }
+}
+
+void UserDatabase::listAllUsers() {
+    auto user_it_ = list_of_users_.begin();
+    
+    for (auto user_it_:list_of_users_) {
+        std::cout << "Name: " << user_it_->name_ <<"\n";
+        std::cout << "Username: " << user_it_->id_ <<"\n";
+        std::cout << "Designation: ";
+        switch (user_it_->type_)
+        {
+        case UserType::kStudent:
+            std::cout << "Student\n\n";
+            break;
+
+        case UserType::kProfessor:
+            std::cout << "Professor\n\n";
+            break;
+
+        case UserType::kLibrarian:
+            std::cout << "Librarian\n\n";
+            break;
+        
+        default:
+            break;
+        }
+    }
+}
+
+void UserDatabase::updateIssuedBooks(std::string old_isbn, Book new_book) {
+    for (auto user_it_:list_of_users_) {
+        if (user_it_->type_ == UserType::kStudent) {
+            auto user = dynamic_cast<Student*>(&(*user_it_));
+            auto book_it_ = user->list_of_books_.begin();
+            for (;book_it_ != user->list_of_books_.end(); book_it_++) {
+                if (book_it_->getISBN() == old_isbn) {
+                    Date date_of_issue = book_it_->getDateOfIssue();
+                    *book_it_ = new_book;
+                    book_it_->bookRequest(date_of_issue);
+                }
+            }
+        }
+
+        else if (user_it_->type_ == UserType::kProfessor){
+            auto user = dynamic_cast<Professor*>(&(*user_it_));
+            auto book_it_ = user->list_of_books_.begin();
+            for (;book_it_ != user->list_of_books_.end(); book_it_++) {
+                if (book_it_->getISBN() == old_isbn) {
+                    Date date_of_issue = book_it_->getDateOfIssue();
+                    *book_it_ = new_book;
+                    book_it_->bookRequest(date_of_issue);
+                }
+            }      
         }
     }
 }

@@ -52,14 +52,14 @@ void LoginState::run(Library* library) {
 
             auto username_found = library->user_database.searchUserByUsername(entered_username);
 
-            if (!username_found->checkCredentials(entered_password)) {
+            if (!(*username_found)->checkCredentials(entered_password)) {
                 std::cout << "Password Incorrect! Please try again.\n";
                 return;
             }
 
-            library->current_user = &(*username_found);
+            library->current_user = &(**username_found);
 
-            switch (username_found->typeOfUser())
+            switch ((*username_found)->typeOfUser())
             {
             case UserType::kStudent:
                 library->changeState(&StudentAccessState::getInstance());
