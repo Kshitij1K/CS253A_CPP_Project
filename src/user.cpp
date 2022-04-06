@@ -1,5 +1,13 @@
 #include <user.hpp>
 
+UserType User::typeOfUser() {
+    return type_;
+}
+
+bool User::checkCredentials(std::string password) {
+    return password_ == password;
+}
+
 Student::Student(std::string name,
                 std::string username,
                 std::string password,
@@ -9,6 +17,7 @@ Student::Student(std::string name,
     name_ = name;
     id_ = username;
     password_ = password;
+    type_ = UserType::kStudent;
 
     list_of_books_ = borrowed_books;
     cleared_fine_ = fines[0];
@@ -16,19 +25,11 @@ Student::Student(std::string name,
 }
 
 double Student::calculateBookWiseFine(Book& book) {
-    std::time_t t = std::time(0);
-    std::tm* today = std::localtime(&t);
-
-    today->tm_min = 0;
-    today->tm_sec = 0;
-    today->tm_hour = 1;
-
+    Date today;
     auto issue_date = book.getDateOfIssue();
-    double difference = std::difftime(std::mktime(today), std::mktime(&issue_date)) / SECS_IN_DAY;
-    long long int days_since_issue = std::floor(difference);
-
-    double fine;
-    if (days_since_issue > 30) fine = (days_since_issue-30)*2;
+    double fine = 0;
+    std::cout << "Diff: " << today.getDifference(issue_date) <<"\n";
+    if (today.getDifference(issue_date) > 30) fine = (today.getDifference(issue_date)-30)*2;
     std::cout << "Fine for this book is Rs " << std::to_string(fine) <<"\n\n\n";
     return fine;
 }
@@ -46,7 +47,7 @@ void Student::calculateFine() {
     std::cout << "Total fine from earlier books already returned is Rs" << prev_fine_ << "\n";
     std::cout << "Total fine already paid is Rs" << cleared_fine_ << "\n";
 
-    std::cout << "Total fine is Rs" << total_current_fine + prev_fine_ - cleared_fine_ << "\n\n\n\n\n";
+    std::cout << "Total fine remaining is Rs" << total_current_fine + prev_fine_ - cleared_fine_ << "\n\n\n\n\n";
     fine_amount_ = total_current_fine + prev_fine_ - cleared_fine_;
 }
 
@@ -76,11 +77,6 @@ void Student::listIssuedBooks() {
     }
 }
 
-std::string Student::typeOfUser() {
-    return "Student";
-}
-
-
 Professor::Professor(std::string name,
                 std::string username,
                 std::string password,
@@ -90,6 +86,7 @@ Professor::Professor(std::string name,
     name_ = name;
     id_ = username;
     password_ = password;
+    type_ = UserType::kProfessor;
 
     list_of_books_ = borrowed_books;
     cleared_fine_ = fines[0];
@@ -97,19 +94,10 @@ Professor::Professor(std::string name,
 }
 
 double Professor::calculateBookWiseFine(Book& book) {
-    std::time_t t = std::time(0);
-    std::tm* today = std::localtime(&t);
-
-    today->tm_min = 0;
-    today->tm_sec = 0;
-    today->tm_hour = 1;
-
+    Date today;
     auto issue_date = book.getDateOfIssue();
-    double difference = std::difftime(std::mktime(today), std::mktime(&issue_date)) / SECS_IN_DAY;
-    long long int days_since_issue = std::floor(difference);
-
-    double fine;
-    if (days_since_issue > 30) fine = (days_since_issue-30)*2;
+    double fine = 0;
+    if (today.getDifference(issue_date) > 60) fine = (today.getDifference(issue_date)-60)*5;
     std::cout << "Fine for this book is Rs " << std::to_string(fine) <<"\n\n\n";
     return fine;
 }
@@ -127,7 +115,7 @@ void Professor::calculateFine() {
     std::cout << "Total fine from earlier books already returned is Rs" << prev_fine_ << "\n";
     std::cout << "Total fine already paid is Rs" << cleared_fine_ << "\n";
 
-    std::cout << "Total fine is Rs" << total_current_fine + prev_fine_ - cleared_fine_ << "\n\n\n\n\n";
+    std::cout << "Total fine remaining is Rs" << total_current_fine + prev_fine_ - cleared_fine_ << "\n\n\n\n\n";
     fine_amount_ = total_current_fine + prev_fine_ - cleared_fine_;
 }
 
@@ -157,12 +145,6 @@ void Professor::listIssuedBooks() {
     }
 }
 
-
-std::string Professor::typeOfUser() {
-    return "Professor";
-}
-
-
 Librarian::Librarian(std::string name,
                 std::string username,
                 std::string password,
@@ -171,9 +153,7 @@ Librarian::Librarian(std::string name,
     name_ = name;
     id_ = username;
     password_ = password;
-    list_of_users_ = database;
-}
+    type_ = UserType::kLibrarian;
 
-std::string Librarian::typeOfUser() {
-    return "Librarian";
+    list_of_users_ = database;
 }

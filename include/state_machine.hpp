@@ -28,12 +28,6 @@ class LoginState : public State {
 
     private:
     LoginState(){}
-        
-    std::vector<std::string> usernames;
-    std::vector<std::string> passwords;
-    std::vector<std::string> types;
-
-    std::string entered_username;
 };
 
 class ProfessorAccessState : public State {
@@ -72,6 +66,10 @@ class LibrarianAccessState : public State {
 
     private:
     Librarian* librarian_;
+    void addUser(std::string username);
+    void modifyUser(std::string username);
+    void addBook(std::string isbn);
+    void modifyBook(std::string isbn);
     // Librarian librarian_;
 };
 

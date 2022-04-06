@@ -3,17 +3,27 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <chrono>
 #define SECS_IN_DAY 86400
 
 class UserDatabase;
 
+enum class UserType {
+    kStudent,
+    kProfessor,
+    kLibrarian,
+    kGeneral
+};
+
 class User {
     public:
-    virtual std::string typeOfUser() = 0;
+    UserType typeOfUser();
+    virtual bool checkCredentials(std::string password);
     protected:
     std::string name_;
     std::string id_;
     std::string password_;
+    UserType type_;
     friend class UserDatabase;
 };
 
@@ -28,7 +38,6 @@ class Professor : public User {
     void clearFineAmount(double amount);
     Book returnBook(std::list<Book>::iterator book_to_clear);
     void listIssuedBooks();
-    std::string typeOfUser() override;
 
     private:
     double calculateBookWiseFine(Book& book);
@@ -49,7 +58,6 @@ class Student : public User {
     Book returnBook(std::list<Book>::iterator book_to_clear);
     void clearFineAmount(double amount);
     void listIssuedBooks();
-    std::string typeOfUser() override;
 
     private:
     double calculateBookWiseFine(Book& book);
@@ -65,7 +73,6 @@ class Librarian: public User{
               std::string username,
               std::string password,
               UserDatabase* database);
-    std::string typeOfUser() override;
     
     private:
     UserDatabase* list_of_users_;

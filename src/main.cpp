@@ -6,6 +6,7 @@ int main (int argc, char** argv) {
     Library library;
     library.changeState(&LoginState::getInstance());
 
+
     while (1) {
         if (library.current_state_ == NULL) break;
         library.current_state_->run(&library);

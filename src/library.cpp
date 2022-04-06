@@ -1,7 +1,9 @@
 #include <library.hpp>
 
+Library::Library(): book_database(), user_database(book_database) {}
+
 void Library::changeState(State* state) {
-        if (current_state_ != NULL) current_state_->exit(this);
+        if (current_state_ != list_of_books_.end()) current_state_->exit(this);
         current_state_ = state;
         current_state_->enter(this);
 }

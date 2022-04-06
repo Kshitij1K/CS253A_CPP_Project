@@ -16,6 +16,7 @@ class State {
 
 class Library {
     public:
+    Library();
     State* current_state_ = NULL;
     std::string username;
     void changeState(State* state);

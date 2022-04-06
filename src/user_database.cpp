@@ -51,7 +51,7 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
                                                             {2}};
 
     std::vector<std::vector<int>> professor_borrowed_books = {{0,1,2},
-                                                              {3},
+                                                              {3,5},
                                                               {2,4}};
 
     std::vector<std::vector<double>> student_fines = {{50, 100},
@@ -70,28 +70,26 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
                                         {{21,9,2021}, {30,1,2022}},
                                         {{7,12,2021}}};
 
-    issue_dates professor_borrow_dates = {{{20, 2, 2022}, {22,1,2022}, {1,1,2021}},
+    issue_dates professor_borrow_dates = {{{1,1,2021}, {22,1,2022}, {20, 2, 2022}},
                                           {{1,12,2021}},
                                           {{25,3,2022}, {25,3,2022}}};
+
+    auto all_books = book_database.getAllBooks();
 
     for (int i = 0; i<student_names.size(); i++) {
         std::list<Book> borrowed_books;
 
         int count = 0;
         for (auto it_:student_borrowed_books[i]) {
-            auto book = borrowed_books.begin();
-            std::advance(book, it_);
-            
-            std::tm issue_date;
-            issue_date.tm_year = std::get<0>(student_borrow_dates[i][count]);
-            issue_date.tm_mon = std::get<1>(student_borrow_dates[i][count]);
-            issue_date.tm_mday = std::get<2>(student_borrow_dates[i][count]);
-            issue_date.tm_min = 1;
+            Date issue_date(std::get<0>(student_borrow_dates[i][count]),
+                            std::get<1>(student_borrow_dates[i][count]),
+                            std::get<2>(student_borrow_dates[i][count]));
+
+            Book book = all_books[it_];
+            book.bookRequest(issue_date);
+            borrowed_books.push_back(book);
+
             count++;
-
-            book->bookRequest(issue_date);
-
-            borrowed_books.push_back(*book);
         }
 
         Student student(student_names[i],
@@ -106,21 +104,18 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
     for (int i = 0; i<prof_names.size(); i++) {
         std::list<Book> borrowed_books;
 
-        int count;
+        int count = 0;
         for (auto it_:professor_borrowed_books[i]) {
-            auto book = borrowed_books.begin();
-            std::advance(book, it_);
+            Date issue_date(std::get<0>(professor_borrow_dates[i][count]),
+                            std::get<1>(professor_borrow_dates[i][count]),
+                            std::get<2>(professor_borrow_dates[i][count]));
 
-            std::tm issue_date;
-            issue_date.tm_year = std::get<0>(professor_borrow_dates[i][count]);
-            issue_date.tm_mon = std::get<1>(professor_borrow_dates[i][count]);
-            issue_date.tm_mday = std::get<2>(professor_borrow_dates[i][count]);
-            issue_date.tm_min = 1;
+
+            Book book = all_books[it_];
+            book.bookRequest(issue_date);
+            borrowed_books.push_back(book);
+
             count++;
-
-            book->bookRequest(issue_date);
-
-            borrowed_books.push_back(*book);
         }
 
         Professor professor(prof_names[i],
@@ -131,6 +126,7 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
         
         list_of_professors_.push_back(professor);
     }                                     
+
 
     for (int i = 0; i<lib_names.size(); i++) {
         Librarian librarian(lib_names[i],
@@ -279,7 +275,6 @@ User* UserDatabase::searchUserByUsername(std::string username) {
     
     for (;student_it_ != list_of_students_.end(); student_it_++){
         if (student_it_->id_ == username) {
-            list_of_students_.erase(student_it_);
             return &(*student_it_);
         }
     }

@@ -13,13 +13,13 @@ void StudentAccessState::enter(Library* library) {
 
 void StudentAccessState::run(Library* library) {
     // library->current_state_ = NULL;
-    std::cout << "Please enter the command you wish to execute."
+    std::cout << "Please enter the command you wish to execute. "
                  "Available commands are \n"
                  "1) ALLBOOKLIST (Will display all books)\n" //Done 
                  "2) ISSUEDBOOKLIST (Will display books you have issued)\n" //Done
                  "3) ISBOOKAVAILABLE <ISBN> (Will check  whether the book with this particular ISBN is available for issue or not)\n" //Done
                  "4) GETFINE (Will display book wise and total fine you have accumulated)\n" //Done
-                 "5) LOGOUT (Will exit the software)\n" // Done
+                 "5) LOGOUT (Will log you out)\n" // Done
                  "6) EXIT (Will exit the software)\n"; // Done
     
     std::string command;
@@ -49,7 +49,10 @@ void StudentAccessState::run(Library* library) {
         }
 
         if (split_command[0] == "ALLBOOKLIST") {
-          library->book_database.listAllBooks();
+          auto books = library->book_database.getAllBooks();
+          for (auto book_it_:books) {
+            book_it_.displayBookInfo();
+          }
           return;
         }
 
@@ -63,7 +66,7 @@ void StudentAccessState::run(Library* library) {
       if (split_command[0] == "ISBOOKAVAILABLE") {
         std::string isbn = split_command[1];
         bool is_book_avalaible = library->book_database.isBookAvailable(isbn);
-        std::cout << is_book_avalaible ? "Book is available for issue.\n\n" : "Book is unavailable for issue.\n\n";
+        std::cout << (is_book_avalaible ? "Book is available for issue.\n\n" : "Book is unavailable for issue.\n\n");
         return;
       }
     }

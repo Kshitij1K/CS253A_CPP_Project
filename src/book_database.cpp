@@ -1,5 +1,90 @@
 #include <book_database.hpp>
 
+Date::Date() {
+    std::time_t time_now = std::time(0);
+    std::tm* tm_time_now = std::localtime(&time_now);
+
+    year_ = tm_time_now->tm_year+1900;
+    month_ = tm_time_now->tm_mon+1;
+    day_ = tm_time_now->tm_mday;
+}
+
+Date::Date(int day, int month, int year) {
+    year_ = year;
+    month_ = month;
+    day_ = day;
+}
+
+long int Date::getDifference(Date& date) {
+    const int days_in_a_month[12] = { 31, 28, 31, 30, 31, 30,
+                                      31, 31, 30, 31, 30, 31 };
+
+    int curr_date_leap_years = year_;
+    if (month_ <=2 ) curr_date_leap_years--;
+    curr_date_leap_years = curr_date_leap_years/4 + curr_date_leap_years/400 - curr_date_leap_years/100;
+
+    long long int num_days_curr_date = year_*365 + day_;
+    for (int i=0; i<month_-1; i++) num_days_curr_date += days_in_a_month[i];
+    num_days_curr_date += curr_date_leap_years;
+
+    int prev_date_leap_years = date.year_;
+    if (date.month_ <=2 ) prev_date_leap_years--;
+    prev_date_leap_years = prev_date_leap_years/4 + prev_date_leap_years/400 - prev_date_leap_years/100;
+
+    long long int num_days_prev_date = date.year_*365 + date.day_;
+    for (int i=0; i<date.month_-1; i++) num_days_prev_date += days_in_a_month[i];
+    num_days_prev_date += prev_date_leap_years;
+
+    return num_days_curr_date - num_days_prev_date;
+}
+
+BookDatabase::BookDatabase() {
+    std::vector<std::string> names = {"Embedded Systems",
+                                      "Control Theory",
+                                      "Numerical Methods",
+                                      "Solid Mechanics",
+                                      "Fluid Mechanics",
+                                      "Fluid Mechanics"};
+
+    std::vector<std::string> authors = {"Lee and Seshia",
+                                        "Donald Kirk",
+                                        "Richard Wesley",
+                                        "Rownland Richard",
+                                        "Frank White",
+                                        "Cengel and Boles"};
+
+    std::vector<std::string> isbn = {"1263",
+                                     "7176",
+                                     "2003",
+                                     "4279",
+                                     "5002",
+                                     "3329"};
+
+    std::vector<std::string> publication = {"2017",
+                                            "2012",
+                                            "1962",
+                                            "2000",
+                                            "1979",
+                                            "2006"};
+
+    std::vector<bool> is_available = {true,
+                                      true,
+                                      false,
+                                      true,
+                                      true,
+                                      true};
+
+
+    for (int i=0; i<names.size(); i++) {
+        Book book(names[i],
+                  authors[i],
+                  isbn[i],
+                  publication[i]);
+
+        list_of_books_.push_back({book, is_available[i]});
+    }
+}
+
 void BookDatabase::addBook(Book book){
     auto existing_book = searchBookByISBN(book.isbn);
     if (existing_book != list_of_books_.end()) {
@@ -64,12 +149,19 @@ bool BookDatabase::isBookAvailable(std::string isbn) {
     auto book = searchBookByISBN(isbn);
 
     if (book == list_of_books_.end()) {
-        std::cout << "Book with this ISBN doesn't exist!\n\n";
+        std::cout << "Book with this ISBN doesn't exist!\n";
         return false;
     }
 
     return book->second;
 }
+
+bool BookDatabase::doesBookExist(std::string isbn) {
+    auto book = searchBookByISBN(isbn);
+    if (book == list_of_books_.end()) return false;
+    return true;
+}
+
 
 void BookDatabase::bookRequest(std::string isbn, bool is_stock_left) {
     auto book = searchBookByISBN(isbn);
@@ -79,25 +171,35 @@ void BookDatabase::bookRequest(std::string isbn, bool is_stock_left) {
         return;
     }
     
-    auto date_today = std::time(0);
-    std::tm* today = std::localtime(&date_today);
-
-    today->tm_min = 1;
-    today->tm_sec = 0;
-    today->tm_hour = 0;
-    book->first.bookRequest(*today);
+    Date today;
+    book->first.bookRequest(today);
     book->second = is_stock_left;
 }
 
-void BookDatabase::listAllBooks() {
+std::vector<Book> BookDatabase::getAllBooks() {
     auto book_it_ = list_of_books_.begin();
+    std::vector<Book> book_list;
+    book_list.reserve(list_of_books_.size());
 
     for (; book_it_ != list_of_books_.end(); book_it_++) {
-        book_it_->first.displayBookInfo();
+        book_list.push_back(book_it_->first);
     }
+
+    return book_list;
 }
 
-void Book::bookRequest(std::tm date_of_issue) {
+Book::Book(std::string title,
+           std::string author,
+           std::string isbn,
+           std::string publication) {
+
+    this->title = title;
+    this->author = author;
+    this->isbn = isbn;
+    this->publication = publication;
+}
+
+void Book::bookRequest(Date date_of_issue) {
     this->date_of_issue = date_of_issue;
 }
 
@@ -108,6 +210,6 @@ void Book::displayBookInfo() {
     std::cout << "Publication Year: " << publication << "\n\n";
 }
 
-std::tm Book::getDateOfIssue() {
+Date Book::getDateOfIssue() {
     return date_of_issue;
 }

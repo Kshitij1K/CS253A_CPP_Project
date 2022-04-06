@@ -7,9 +7,9 @@ State& LoginState::getInstance() {
 
 void LoginState::enter(Library* library) {
     std::cout << "LOGIN PORTAL\n";
-    usernames = {"stud", "prof", "lib"};
-    passwords = {"abc", "123", "def"};
-    types = {"1", "2", "3"};
+    // usernames = {"stud", "prof", "lib"};
+    // passwords = {"abc", "123", "def"};
+    // types = {"1", "2", "3"};
 }
 
 void LoginState::run(Library* library) {
@@ -39,39 +39,40 @@ void LoginState::run(Library* library) {
 
     if (split_command.size() == 3) {
         if (split_command[0] == "LOGIN") {
-            entered_username = split_command[1];
+            std::string entered_username = split_command[1];
             std::string entered_password = split_command[2];
-            auto username_iter = std::find(usernames.begin(), usernames.end(), entered_username);
+            // auto username_iter = std::find(library->user_database..begin(), usernames.end(), entered_username);
 
-            if (username_iter == usernames.end()) {
+            auto username_found = library->user_database.searchUserByUsername(entered_username);
+
+            if (username_found == NULL) {
                 std::cout << "No such user exists! Please try again.\n";
                 return;
             } 
 
-            long long int index = username_iter-usernames.begin();
-
-            if (passwords[index] != entered_password) {
+            if (!username_found->checkCredentials(entered_password)) {
                 std::cout << "Password Incorrect! Please try again.\n";
                 return;
             }
 
+            library->current_user = username_found;
 
-            switch (stoi(types[index]))
+            switch (username_found->typeOfUser())
             {
-            case 1:
-                library->current_user = library->user_database.searchUserByUsername(*username_iter);
+            case UserType::kStudent:
                 library->changeState(&StudentAccessState::getInstance());
                 return;
             
-            case 2:
-                library->current_user = library->user_database.searchUserByUsername(*username_iter);
+            case UserType::kProfessor:
                 library->changeState(&ProfessorAccessState::getInstance());
                 return;
 
-            case 3:
-                library->current_user = library->user_database.searchUserByUsername(*username_iter);
+            case UserType::kLibrarian:
                 library->changeState(&LibrarianAccessState::getInstance());
                 return;
+
+            default:
+                std::cout << "User not determined\n\n";
             }
 
         }
@@ -80,6 +81,4 @@ void LoginState::run(Library* library) {
 
 }   
 
-void LoginState::exit(Library* library) {
-    library->username = entered_username;
-}
+void LoginState::exit(Library* library) {}
