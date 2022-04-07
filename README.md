@@ -76,7 +76,9 @@ All the data inside the angular brackets should be entered without the angular b
 
 - ISSUEBOOK \<username> \<ISBN> : Will issue the book having this ISBN to the user having this username. If the book is not in stock, then it will prevent you from issuing it. You also get another prompt asking whether this is the last piece in stock, if it is, it will set the stock to not available (hence no other users will be able to issue this book, unless another user returns it).
 
-- RETURNBOOK \<username> \<ISBN> : Will mark the book having this ISBN as returned, from the user having this username. Will also display the fine that has to be collected from this user upon return. 
+- RETURNBOOK \<username> \<ISBN> : Will mark the book having this ISBN as returned, from the user having this username. Will also display the fine that has to be collected from this user for this book. (However, this doesn't actually record a payment, that has to be done by the next command, CLEARFINE) 
+
+- CLEARFINE \<username> \<amount> : Will mark this amount as cleared, from the due fines of this user.
 
 - SHIFTCURRDATE \<number-of-days> : This is a feature that is included solely to make your (the TA testing my code) life easier. When a book is issued, it takes the date from the system time and puts it down as the issue date. Now, you can't really wait for 30 or 60 days to test whether my code produces the correct fine amount for this book, can you? So, what you can do, is shift the current date by as many number of days you want (should be an integer). This command is additive is nature, so if you run `SHIFTCURRDATE 30` twice, the date will  be shifted forward by 60 days in total. You can also go backwards in time by entering a negative integer.
 
@@ -247,5 +249,9 @@ In the src folder you can find
         - Clear Fine Amount is named clearFine
 
     - class Librarian is named Librarian itself
+
+- In the User Database, the username for each user is UNIQUE. Hence the software will not allow you to add or modify users such that two users have the same username. Also, the username and password both should not contain any spaces (again this too will be checked and the software will disallow any such additions or modifications). Rest all details need not be unique.
+
+- Similarly in the Book Database, the ISBN is unique and should contain no spaces. The software automatically protects against erroneous inputs (and cancels the faulty operation with a prompt) in this case also. Rest all details need not be unique.
 
 - This code can also be accessed (after 11:59PM on 07/04/2022) on this [github link](https://github.com/Kshitij1K/CS253A_CPP_Project).

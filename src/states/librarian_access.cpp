@@ -25,10 +25,10 @@ void LibrarianAccessState::run(Library* library) {
                 "10) CHECKISSUEDBOOKS <username> (Check the books issued to this username)\n" // Done
                 "11) ISSUEBOOK <username> <isbn> (Issue the book with this ISBN, to the user having this username)\n" // Done
                 "12) RETURNBOOK <username> <isbn> (Mark book with this ISBN as being returned by the user having this username)\n" // Done
-                "13) PAYFINE <username> <amount> (Record a payment of this amount towards the fine dues, by the user having this username)\n"
+                "13) CLEARFINE <username> <amount> (Record a payment of this amount towards the fine dues, by the user having this username)\n" // Done
                 "14) SHIFTCURRDATE <number-of-days> (This command is for testing purpose, it shifts the current date forward by this many days. You can also specify a negative number here.)\n" // Done
                 "15) LOGOUT (Will log you out)\n" // Done
-                "16) EXIT (Will exit the software)\n\n"; // Done
+                "16) EXIT (Will exit the software)\n"; // Done
 
   std::string command;
   std::getline(std::cin, command);
@@ -235,7 +235,7 @@ void LibrarianAccessState::run(Library* library) {
         return;
       }
 
-      double fine;
+      double fine = 0;
       try {
         fine = std::stod(split_command[2]);
         std::cout << "A payment of Rs " << fine << " has been recorded.\n\n";
@@ -325,13 +325,15 @@ void LibrarianAccessState::addUser(Library* library) {
   
   else if (type == "Professor") {
     std::list<Book> borrowed_books;
-    auto professor = std::make_shared<Professor>(name, username, password, borrowed_books);
+    std::vector<double> fines = {0, 0};
+    auto professor = std::make_shared<Professor>(name, username, password, borrowed_books, fines);
     library->user_database.addUser(professor);
   }
   
   else if (type == "Student") {
     std::list<Book> borrowed_books;
-    auto student = std::make_shared<Student>(name, username, password, borrowed_books);
+    std::vector<double> fines = {0, 0};
+    auto student = std::make_shared<Student>(name, username, password, borrowed_books, fines);
     library->user_database.addUser(student);
   }
   else {

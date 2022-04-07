@@ -49,7 +49,10 @@ class BookDatabase {
     void addBook(Book book);
     void updateBook(std::string isbn, Book new_book, std::string availability);
     void deleteBook(std::string isbn);
+
+    // Didn't really come in use, since I have used ISBN as a unique identifer
     std::shared_ptr<std::list<Book>> searchBookByTitle(std::string title);
+    
     std::list<std::pair<Book, bool>>::iterator searchBookByISBN(std::string isbn);
     bool isBookAvailable(std::string isbn);
     void updateAvailability(std::string isbn, bool is_available);

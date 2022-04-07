@@ -14,7 +14,9 @@ class UserDatabase {
                     std::string new_name);  
     void deleteUser(std::string username);
     
-    std::shared_ptr<std::list<User>> searchUserByName(std::string name);
+    // Didn't really come in use, since I have used username as a unique identifier
+    std::shared_ptr<std::list<User>> searchUserByName(std::string name); 
+    
     std::list<std::shared_ptr<User>>::iterator searchUserByUsername(std::string username);
     bool doesUserExist(std::string username);
     void checkIssuedUsers (std::string isbn);
