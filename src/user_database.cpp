@@ -54,15 +54,15 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
                                                               {3,5},
                                                               {2,4}};
 
-    // std::vector<std::vector<double>> student_fines = {{50, 100},
-    //                                                   {34, 56},
-    //                                                   {12, 21},
-    //                                                   {45, 3},
-    //                                                   {0, 0}};
+    std::vector<std::vector<double>> student_fines = {{50, 100},
+                                                      {34, 56},
+                                                      {12, 21},
+                                                      {45, 3},
+                                                      {0, 0}};
 
-    // std::vector<std::vector<double>> prof_fines = {{5, 10},
-    //                                                {2, 11},
-    //                                                {0, 0}};
+    std::vector<std::vector<double>> prof_fines = {{5, 10},
+                                                   {2, 11},
+                                                   {0, 0}};
 
     issue_dates student_borrow_dates = {{{25,12,2021}, {25,12,2021}},
                                         {{30,3,2022}, {1,1,2022}, {2,3,2022}},
@@ -95,7 +95,8 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
         auto student = std::make_shared<Student>(student_names[i],
                                                     student_usernames[i],
                                                     student_passwords[i],
-                                                    borrowed_books);
+                                                    borrowed_books,
+                                                    student_fines[i]);
         
         list_of_users_.push_back(student);
     } 
@@ -120,7 +121,8 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
         auto professor = std::make_shared<Professor>(prof_names[i],
                                                      prof_usernames[i],
                                                      prof_passwords[i],
-                                                     borrowed_books);
+                                                     borrowed_books,
+                                                     prof_fines[i]);
         
         list_of_users_.push_back(professor);
     }                                     

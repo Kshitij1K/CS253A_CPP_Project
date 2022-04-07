@@ -25,9 +25,10 @@ void LibrarianAccessState::run(Library* library) {
                 "10) CHECKISSUEDBOOKS <username> (Check the books issued to this username)\n" // Done
                 "11) ISSUEBOOK <username> <isbn> (Issue the book with this ISBN, to the user having this username)\n" // Done
                 "12) RETURNBOOK <username> <isbn> (Mark book with this ISBN as being returned by the user having this username)\n" // Done
-                "13) SHIFTCURRDATE <number-of-days> (This command is for testing purpose, it shifts the current date forward by this many days. You can also specify a negative number here.)\n" // Done
-                "14) LOGOUT (Will log you out)\n" // Done
-                "15) EXIT (Will exit the software)\n\n"; // Done
+                "13) PAYFINE <username> <amount> (Record a payment of this amount towards the fine dues, by the user having this username)\n"
+                "14) SHIFTCURRDATE <number-of-days> (This command is for testing purpose, it shifts the current date forward by this many days. You can also specify a negative number here.)\n" // Done
+                "15) LOGOUT (Will log you out)\n" // Done
+                "16) EXIT (Will exit the software)\n\n"; // Done
 
   std::string command;
   std::getline(std::cin, command);
@@ -225,6 +226,41 @@ void LibrarianAccessState::run(Library* library) {
 
       std::cout << "Book returned successfully.\n";
       return;
+    }
+
+    if (split_command[0] == "CLEARFINE") {
+      std::string entered_username = split_command[1];
+      if (!library->user_database.doesUserExist(entered_username)) {
+        std::cout << "No user exists with the given username!\n\n";
+        return;
+      }
+
+      double fine;
+      try {
+        fine = std::stod(split_command[2]);
+        std::cout << "A payment of Rs " << fine << " has been recorded.\n\n";
+      } catch (std::invalid_argument) {
+        std::cout << "Please enter a valid number for the cleared fine amount.\n\n";
+      }
+
+      auto user_for_clear = library->user_database.searchUserByUsername(entered_username);
+
+      if ((*user_for_clear)->typeOfUser() == UserType::kStudent) {
+        auto student = dynamic_cast<Student*>(&(**user_for_clear));
+        student->clearFine(fine);
+      }
+
+      if ((*user_for_clear)->typeOfUser() == UserType::kProfessor) {
+        auto professor = dynamic_cast<Professor*>(&(**user_for_clear));
+        professor->clearFine(fine);
+      }
+
+      if ((*user_for_clear)->typeOfUser() == UserType::kLibrarian) {
+        std::cout << "The user is a librarian! He/She doesn't have any fines to clear.\n\n";
+        return;
+      }
+      return;
+
     }
     std::cout << "Incorrect Command Entered! Please enter the correct command, according to instructions.\n";
     return;

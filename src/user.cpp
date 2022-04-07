@@ -11,7 +11,8 @@ bool User::checkCredentials(std::string password) {
 Student::Student(std::string name,
                 std::string username,
                 std::string password,
-                std::list<Book> borrowed_books) {
+                std::list<Book> borrowed_books,
+                std::vector<double> fines) {
 
     name_ = name;
     id_ = username;
@@ -19,6 +20,8 @@ Student::Student(std::string name,
     type_ = UserType::kStudent;
 
     list_of_books_ = borrowed_books;
+    cleared_fine_ = fines[0];
+    fine_prev_books_ = fines[1];
 }
 
 double Student::calculateBookWiseFine(Book& book) {
@@ -41,7 +44,13 @@ void Student::calculateFine() {
         total_current_fine += calculateBookWiseFine(book_it_);
     }
 
-    std::cout << "Total fine to pay is Rs" << total_current_fine << "\n\n\n\n\n";
+    std::cout << "Total fine from currently issued books is Rs" << total_current_fine << "\n";
+    std::cout << "Total fine from previously returned books is Rs" << fine_prev_books_ << "\n";
+    std::cout << "Total fine already paid is Rs" << cleared_fine_ << "\n";
+
+    fine_amount_ = total_current_fine - cleared_fine_ + fine_prev_books_; 
+
+    std::cout << "Total fine remaining to pay is Rs" << fine_amount_ << "\n";
 }
 
 void Student::returnBook(std::string isbn) {
@@ -56,8 +65,9 @@ void Student::returnBook(std::string isbn) {
         return;
     }
 
-    calculateBookWiseFine(*book_it_);
-    std::cout << "Please collect this fine amount from the user.\n"; 
+    double fine = calculateBookWiseFine(*book_it_);
+    std::cout << "The fine amount from this book is Rs " << fine <<"\n";
+    fine_prev_books_ += fine; 
     list_of_books_.erase(book_it_);
 }
 
@@ -86,17 +96,24 @@ void Student::issueBook(Book book) {
     list_of_books_.push_back(book);
 }
 
+void Student::clearFine(double fine) {
+    cleared_fine_ += fine;
+}
+
 Professor::Professor(std::string name,
                      std::string username,
                      std::string password,
-                     std::list<Book> borrowed_books) {
+                     std::list<Book> borrowed_books,
+                     std::vector<double> fines) {
 
     name_ = name;
     id_ = username;
     password_ = password;
     type_ = UserType::kProfessor;
-
     list_of_books_ = borrowed_books;
+
+    cleared_fine_ = fines[0];
+    fine_prev_books_ = fines[1];
 }
 
 double Professor::calculateBookWiseFine(Book& book) {
@@ -116,7 +133,13 @@ void Professor::calculateFine() {
         total_current_fine += calculateBookWiseFine(book_it_);
     }
 
-    std::cout << "Total fine remaining to pay is Rs" << total_current_fine << "\n\n\n\n\n";
+    std::cout << "Total fine from currently issued books is Rs" << total_current_fine << "\n";
+    std::cout << "Total fine from previously returned books is Rs" << fine_prev_books_ << "\n";
+    std::cout << "Total fine already paid is Rs" << cleared_fine_ << "\n";
+
+    fine_amount_ = total_current_fine - cleared_fine_ + fine_prev_books_; 
+
+    std::cout << "Total fine remaining to pay is Rs" << fine_amount_ << "\n";
 }
 
 void Professor::returnBook(std::string isbn) {
@@ -131,8 +154,9 @@ void Professor::returnBook(std::string isbn) {
         return;
     }
     
-    calculateBookWiseFine(*book_it_);
-    std::cout << "Please collect this fine amount from the user.\n"; 
+    double fine = calculateBookWiseFine(*book_it_);
+    std::cout << "The fine amount from this book is Rs " << fine <<"\n";
+    fine_prev_books_ += fine; 
     list_of_books_.erase(book_it_);
 }
 
@@ -159,6 +183,10 @@ void Professor::listIssuedBooks() {
 
 void Professor::issueBook(Book book) {
     list_of_books_.push_back(book);
+}
+
+void Professor::clearFine(double fine) {
+    cleared_fine_ += fine;
 }
 
 Librarian::Librarian(std::string name,
