@@ -20,7 +20,7 @@ void LibrarianAccessState::run(Library* library) {
                 "5)  UPDATEBOOK (Will update a book, prompts to enter other details will follow)\n" // Done
                 "6)  DELETEBOOK <isbn> (Will delete a book with this ISBN. This process is irreversible!\n" // Done
                 "7)  ALLBOOKLIST (Will list all books)\n" // Done
-                "8)  ALLUSERSLIST (Will list all users)\n" //Done
+                "8)  ALLUSERLIST (Will list all users)\n" //Done
                 "9)  CHECKBOOKSTATUS <isbn> (Check the status of this book, like whom is it issued to or whether it is available for issue or not\n" // Done
                 "10) CHECKISSUEDBOOKS <username> (Check the books issued to this username)\n" // Done
                 "11) ISSUEBOOK <username> <isbn> (Issue the book with this ISBN, to the user having this username)\n" // Done
@@ -65,25 +65,21 @@ void LibrarianAccessState::run(Library* library) {
     }
 
     if (split_command[0] == "ADDBOOK") {
-      std::string entered_isbn = split_command[1];
       addBook(library);
       return;
     }
 
     if (split_command[0] == "UPDATEBOOK") {
-      std::string entered_isbn = split_command[1];
       modifyBook(library);
       return;
     }
 
     if (split_command[0] == "ADDUSER") {
-      std::string entered_username = split_command[1];
       addUser(library);
       return;
     }
 
     if (split_command[0] == "UPDATEUSER") {
-      std::string entered_username = split_command[1];
       modifyUser(library);
       return;
     }
@@ -101,6 +97,7 @@ void LibrarianAccessState::run(Library* library) {
     if (split_command[0] == "DELETEBOOK") {
       std::string entered_isbn = split_command[1];
       library->book_database.deleteBook(entered_isbn);
+      library->user_database.deleteIssuedBooks(entered_isbn);
       return;
     }
     
@@ -117,7 +114,6 @@ void LibrarianAccessState::run(Library* library) {
         std::cout << "This user doesn't exist!\n\n";
         return;
       }
-      std::cout << "The list of books issued by this user is\n";
       auto user = library->user_database.searchUserByUsername(entered_username);
 
       if ((*user)->typeOfUser() == UserType::kStudent) {
@@ -125,10 +121,13 @@ void LibrarianAccessState::run(Library* library) {
         student->listIssuedBooks();
       } 
 
-      else {
+      else if ((*user)->typeOfUser() == UserType::kProfessor){
         auto professor = dynamic_cast<Professor*>(&(**user));
-        professor->listIssuedBooks();
+         professor->listIssuedBooks();
+      } else {
+        std::cout << "This user is a librarian! He/She cannot issue any books.\n\n";
       }
+      return;
     }
 
     if (split_command[0] == "SHIFTCURRDATE") {
@@ -140,6 +139,7 @@ void LibrarianAccessState::run(Library* library) {
       } catch (std::invalid_argument) {
         std::cout << "Please enter a valid integer for the number of days.\n\n";
       }
+      return;
     }
 
     std::cout << "Incorrect Command Entered! Please enter the correct command, according to instructions.\n";
@@ -149,8 +149,8 @@ void LibrarianAccessState::run(Library* library) {
 
   if (split_command.size() == 3) {
     if (split_command[0] == "ISSUEBOOK") {
-      std::string entered_isbn = split_command[1];
-      std::string entered_username = split_command[2];
+      std::string entered_username = split_command[1];
+      std::string entered_isbn = split_command[2];
 
       if (!library->book_database.doesBookExist(entered_isbn)) {
         std::cout << "No book exists with the given ISBN!\n\n";
@@ -186,11 +186,18 @@ void LibrarianAccessState::run(Library* library) {
         professor->issueBook(library->book_database.bookRequest(entered_isbn, is_available));
       }
 
+      if ((*user_to_issue)->typeOfUser() == UserType::kLibrarian) {
+        std::cout << "The user is a librarian! He/She cannot return books.\n\n";
+        return;
+      }
+      
+      std::cout << "Book issued successfully.\n\n";
+      return;
     }
 
     if (split_command[0] == "RETURNBOOK") {
-      std::string entered_isbn = split_command[1];
-      std::string entered_username = split_command[2];
+      std::string entered_username = split_command[1];
+      std::string entered_isbn = split_command[2];
 
       if (!library->user_database.doesUserExist(entered_username)) {
         std::cout << "No user exists with the given username!\n\n";
@@ -210,6 +217,13 @@ void LibrarianAccessState::run(Library* library) {
         professor->returnBook(entered_isbn);
         library->book_database.updateAvailability(entered_isbn, true);
       }
+
+      if ((*user_for_return)->typeOfUser() == UserType::kLibrarian) {
+        std::cout << "The user is a librarian! He/She cannot return books.\n\n";
+        return;
+      }
+
+      std::cout << "Book returned successfully.\n";
       return;
     }
     std::cout << "Incorrect Command Entered! Please enter the correct command, according to instructions.\n";
@@ -269,22 +283,19 @@ void LibrarianAccessState::addUser(Library* library) {
   std::getline(std::cin, type);
 
   if (type == "Librarian") {
-    Librarian librarian(name, username, password);
+    auto librarian = std::make_shared<Librarian>(name, username, password);
     library->user_database.addUser(librarian);
   } 
   
   else if (type == "Professor") {
     std::list<Book> borrowed_books;
-    std::vector<double> fines;
-    Professor professor(name, username, password, borrowed_books, fines);
-    library->user_database.addUser(professor);
+    auto professor = std::make_shared<Professor>(name, username, password, borrowed_books);
     library->user_database.addUser(professor);
   }
   
   else if (type == "Student") {
     std::list<Book> borrowed_books;
-    std::vector<double> fines;
-    Student student(name, username, password, borrowed_books, fines);
+    auto student = std::make_shared<Student>(name, username, password, borrowed_books);
     library->user_database.addUser(student);
   }
   else {
@@ -333,7 +344,8 @@ void LibrarianAccessState::modifyBook(Library* library) {
 
   Book new_book(new_title, new_author, new_isbn, new_publication);
   library->book_database.updateBook(old_isbn, new_book, availability);
-  library->user_database.updateIssuedBooks(old_isbn, new_book);
+  auto updated_book = library->book_database.searchBookByISBN((new_isbn == "") ? old_isbn : new_isbn);
+  library->user_database.updateIssuedBooks(old_isbn, updated_book->first);
 
 }
 

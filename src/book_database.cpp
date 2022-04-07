@@ -113,15 +113,15 @@ void BookDatabase::updateBook(std::string isbn, Book new_book, std::string avail
             return;
         }
 
-        existing_book->first.isbn = new_book.isbn;
     }
 
+    if (new_book.isbn != "") existing_book->first.isbn = new_book.isbn;
     if (new_book.title != "") existing_book->first.title = new_book.title;
-    if (new_book.publication != "") existing_book->first.publication = new_book.title;
+    if (new_book.publication != "") existing_book->first.publication = new_book.publication;
     if (new_book.author != "") existing_book->first.author = new_book.author;
 
     if (availability == "1") existing_book->second = true;
-    else if (availability == "2") existing_book->second = false;
+    else if (availability == "0") existing_book->second = false;
 
     std::cout << "Updating book successful.\n\n";
 }
@@ -153,11 +153,11 @@ std::shared_ptr<std::list<Book>> BookDatabase::searchBookByTitle(std::string tit
 
 std::list<std::pair<Book, bool>>::iterator BookDatabase::searchBookByISBN(std::string isbn) {
     auto book_it_ = list_of_books_.begin();
-
     for (; book_it_ != list_of_books_.end(); book_it_++) {
         if (book_it_->first.isbn == isbn) return book_it_;
     }
-
+    
+    std::cout << "Not found bruh\n";
     return book_it_;
 }
 

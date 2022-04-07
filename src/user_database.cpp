@@ -54,15 +54,15 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
                                                               {3,5},
                                                               {2,4}};
 
-    std::vector<std::vector<double>> student_fines = {{50, 100},
-                                                      {34, 56},
-                                                      {12, 21},
-                                                      {45, 3},
-                                                      {0, 0}};
+    // std::vector<std::vector<double>> student_fines = {{50, 100},
+    //                                                   {34, 56},
+    //                                                   {12, 21},
+    //                                                   {45, 3},
+    //                                                   {0, 0}};
 
-    std::vector<std::vector<double>> prof_fines = {{5, 10},
-                                                   {2, 11},
-                                                   {0, 0}};
+    // std::vector<std::vector<double>> prof_fines = {{5, 10},
+    //                                                {2, 11},
+    //                                                {0, 0}};
 
     issue_dates student_borrow_dates = {{{25,12,2021}, {25,12,2021}},
                                         {{30,3,2022}, {1,1,2022}, {2,3,2022}},
@@ -95,8 +95,7 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
         auto student = std::make_shared<Student>(student_names[i],
                                                     student_usernames[i],
                                                     student_passwords[i],
-                                                    borrowed_books,
-                                                    student_fines[i]);
+                                                    borrowed_books);
         
         list_of_users_.push_back(student);
     } 
@@ -121,8 +120,7 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
         auto professor = std::make_shared<Professor>(prof_names[i],
                                                      prof_usernames[i],
                                                      prof_passwords[i],
-                                                     borrowed_books,
-                                                     prof_fines[i]);
+                                                     borrowed_books);
         
         list_of_users_.push_back(professor);
     }                                     
@@ -150,23 +148,13 @@ std::shared_ptr<std::list<User>> UserDatabase::searchUserByName(std::string name
     return result;
 }
 
-void UserDatabase::addUser(User user) {
-    if (doesUserExist(user.id_)) {
+void UserDatabase::addUser(std::shared_ptr<User> user) {
+    if (doesUserExist(user->id_)) {
         std::cout << "User with this username already exists! Please enter a unique username.\n";
         return;
     }
 
-    if (user.type_ == UserType::kStudent) {
-        auto added_user = std::make_shared<Student>(dynamic_cast<Student&>(user));
-        list_of_users_.push_back(added_user);
-    } else if (user.type_ == UserType::kProfessor) {
-        auto added_user = std::make_shared<Professor>(dynamic_cast<Professor&>(user));
-        list_of_users_.push_back(added_user);
-    } else if (user.type_ == UserType::kLibrarian) {
-        auto added_user = std::make_shared<Librarian>(dynamic_cast<Librarian&>(user));
-        list_of_users_.push_back(added_user);
-    }
-
+    list_of_users_.push_back(user);
     std::cout << "User added successfully.\n\n";
 }
 
@@ -283,6 +271,7 @@ void UserDatabase::updateIssuedBooks(std::string old_isbn, Book new_book) {
             }
         }
 
+        // std::cout << "Line 275\n";
         else if (user_it_->type_ == UserType::kProfessor){
             auto user = dynamic_cast<Professor*>(&(*user_it_));
             auto book_it_ = user->list_of_books_.begin();
@@ -292,6 +281,26 @@ void UserDatabase::updateIssuedBooks(std::string old_isbn, Book new_book) {
                     *book_it_ = new_book;
                     book_it_->bookRequest(date_of_issue);
                 }
+            }      
+        }
+    }
+}
+
+void UserDatabase::deleteIssuedBooks (std::string isbn) {
+    for (auto user_it_:list_of_users_) {
+        if (user_it_->type_ == UserType::kStudent) {
+            auto user = dynamic_cast<Student*>(&(*user_it_));
+            auto book_it_ = user->list_of_books_.begin();
+            for (;book_it_ != user->list_of_books_.end(); book_it_++) {
+                if (book_it_->getISBN() == isbn) user->deleteBook(isbn);
+            }
+        }
+
+        else if (user_it_->type_ == UserType::kProfessor){
+            auto user = dynamic_cast<Professor*>(&(*user_it_));
+            auto book_it_ = user->list_of_books_.begin();
+            for (;book_it_ != user->list_of_books_.end(); book_it_++) {
+                if (book_it_->getISBN() == isbn) user->returnBook(isbn);
             }      
         }
     }

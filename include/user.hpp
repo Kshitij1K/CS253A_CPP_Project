@@ -30,21 +30,17 @@ class User {
 class Professor : public User {
     public:
     Professor(std::string name,
-                std::string username,
-                std::string password,
-                std::list<Book> borrowed_books,
-                std::vector<double> fines);
+            std::string username,
+            std::string password,
+            std::list<Book> borrowed_books);
     void calculateFine();
-    void clearFineAmount(double amount);
     void returnBook(std::string isbn);
+    void deleteBook(std::string isbn);
     void issueBook(Book book);
     void listIssuedBooks();
 
     private:
     double calculateBookWiseFine(Book& book);
-    double fine_amount_;
-    double cleared_fine_ = 0;
-    double prev_fine_;
     std::list<Book> list_of_books_;
     friend class UserDatabase;
 };
@@ -52,21 +48,17 @@ class Professor : public User {
 class Student : public User {
     public:
     Student(std::string name,
-                std::string username,
-                std::string password,
-                std::list<Book> borrowed_books,
-                std::vector<double> fines);
+            std::string username,
+            std::string password,
+            std::list<Book> borrowed_books);
     void calculateFine();
     void returnBook(std::string isbn);
-    void clearFineAmount(double amount);
+    void deleteBook(std::string isbn);
     void issueBook(Book book);
     void listIssuedBooks();
 
     private:
     double calculateBookWiseFine(Book& book);
-    double fine_amount_;
-    double cleared_fine_ = 0;
-    double prev_fine_;
     std::list<Book> list_of_books_;
     friend class UserDatabase;
 };
