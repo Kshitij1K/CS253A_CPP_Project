@@ -1,6 +1,6 @@
 #include <user_database.hpp>
 
-typedef std::vector<std::vector<std::tuple<int, int, int>>> issue_dates;
+typedef std::vector<std::vector<std::vector<int>>> issue_dates;
 
 UserDatabase::UserDatabase(BookDatabase book_database) {
     std::vector<std::string> student_names = {"Kshitij Kabeer",
@@ -81,9 +81,9 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
 
         int count = 0;
         for (auto it_:student_borrowed_books[i]) {
-            Date issue_date(std::get<0>(student_borrow_dates[i][count]),
-                            std::get<1>(student_borrow_dates[i][count]),
-                            std::get<2>(student_borrow_dates[i][count]));
+            Date issue_date(student_borrow_dates[i][count][0],
+                            student_borrow_dates[i][count][1],
+                            student_borrow_dates[i][count][2]);
 
             Book book = all_books[it_];
             book.bookRequest(issue_date);
@@ -106,9 +106,9 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
 
         int count = 0;
         for (auto it_:professor_borrowed_books[i]) {
-            Date issue_date(std::get<0>(professor_borrow_dates[i][count]),
-                            std::get<1>(professor_borrow_dates[i][count]),
-                            std::get<2>(professor_borrow_dates[i][count]));
+            Date issue_date(professor_borrow_dates[i][count][0],
+                            professor_borrow_dates[i][count][1],
+                            professor_borrow_dates[i][count][2]);
 
 
             Book book = all_books[it_];
