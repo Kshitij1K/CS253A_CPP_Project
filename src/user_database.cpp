@@ -71,7 +71,7 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
                                         {{7,12,2021}}};
 
     issue_dates professor_borrow_dates = {{{1,1,2021}, {22,1,2022}, {20, 2, 2022}},
-                                          {{1,12,2021}},
+                                          {{1,12,2021}, {17,11,2021}},
                                           {{25,3,2022}, {25,3,2022}}};
 
     auto all_books = book_database.getAllBooks();
