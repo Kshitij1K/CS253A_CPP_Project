@@ -131,44 +131,44 @@ I have included data for 5 students, 3 professors, and 2 librarians. You can log
 
 - Students
     - Name: Kshitij Kabeer, Username: kabeer, Password: abc, 
-      List of books borrowed along with their dates:
+      Fines already paid: Rs50, Fines from returned books: Rs100, List of books borrowed along with their dates:
         - ISBN: 7176, Issued on: 25/12/2021
         - ISBN: 2003, Issued on: 25/12/2021
 
     - Name: Ankit Lakhiwal, Username: ankitl, Password: def,
-       List of books borrowed along with their dates: 
+       Fines already paid: Rs34, Fines from returned books: Rs56, List of books borrowed along with their dates: 
         - ISBN: 1263, Issued on: 30/03/2022
         - ISBN: 7176, Issued on: 01/01/2022
         - ISBN: 5002, Issued on: 02/03/2022
 
     - Name: Pallab Mahato, Username: pallabm, Password: ghi, 
-      List of books borrowed along with their dates:
+      Fines already paid: Rs12, Fines from returned books: Rs22, List of books borrowed along with their dates:
         - ISBN: 4279, Issued on: 02/02/2022
         - ISBN: 5002, Issued on: 15/03/2022
 
     - Name: Kshitiz Chaurasia, Username: kshitchaur, Password: jkl, 
-      List of books borrowed along with their dates:
+      Fines already paid: Rs45, Fines from returned books: Rs4, List of books borrowed along with their dates:
         - ISBN: 7176, Issued on: 21/09/2021
         - ISBN: 2003, Issued on: 30/01/2022
 
     - Name: Sourabh Ingale, Username: singale, Password: mno, 
-      List of books borrowed along with their dates:
+      Fines already paid: Rs0, Fines from returned books: Rs0, List of books borrowed along with their dates:
         - ISBN: 2003, Issued on: 07/12/2021
 
 - Professors
     - Name: Indranil Saha, Username: isaha, Password: pqr, 
-      List of books borrowed along with their dates:
+      Fines already paid: Rs5, Fines from returned books: Rs10, List of books borrowed along with their dates:
         - ISBN: 1263, Issued on: 20/02/2022
         - ISBN: 7176, Issued on: 22/01/2022
         - ISBN: 2003, Issued on: 01/01/2022
 
    - Name: Sumit Basu, Username: sbasu, Password: stu, 
-      List of books borrowed along with their dates:
+      Fines already paid: Rs2, Fines from returned books: Rs15, List of books borrowed along with their dates:
         - ISBN: 4279, Issued on: 01/12/2021
         - ISBN: 3329, Issued on: 17/11/2021 
     
     - Name: Krishnamurthy Muralidhar, Username: kmurli, Password: vwx, 
-      List of books borrowed along with their dates:
+      Fines already paid: Rs0, Fines from returned books: Rs0, List of books borrowed along with their dates:
         - ISBN: 2003, Issued on: 25/03/2022
         - ISBN: 5002, Issued on: 25/03/2022
 

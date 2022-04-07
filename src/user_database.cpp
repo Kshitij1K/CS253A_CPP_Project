@@ -56,12 +56,12 @@ UserDatabase::UserDatabase(BookDatabase book_database) {
 
     std::vector<std::vector<double>> student_fines = {{50, 100},
                                                       {34, 56},
-                                                      {12, 21},
-                                                      {45, 3},
+                                                      {12, 22},
+                                                      {45, 4},
                                                       {0, 0}};
 
     std::vector<std::vector<double>> prof_fines = {{5, 10},
-                                                   {2, 11},
+                                                   {2, 15},
                                                    {0, 0}};
 
     issue_dates student_borrow_dates = {{{25,12,2021}, {25,12,2021}},
