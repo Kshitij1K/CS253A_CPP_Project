@@ -9,9 +9,9 @@ cmake ..
 cmake --build .
 ```
 
-This will build the executable file and place it in the bin folder (inside the build folder that you just created).
+This will build the executable file and place it in the bin folder (inside the build folder that you just created). The executable might also be inside another folder named Debug (inside the bin folder) depending on what compiler you use (this happens with MSVS 22).
 
-To run it, navigate to the bin folder, and type
+To run it, navigate to the folder where the executable file (named `main.exe` or `main`) is located, and type
 `main.exe` (if you are on windows) or `./main` (if you are on linux) to run it.
 
 The software works on the command line interface, hence you have to give it commands to do the various things required by the assignment. The list of available commands and the syntax to properly run them is given in each prompt when you run the software.
